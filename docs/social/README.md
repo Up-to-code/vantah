@@ -1,3 +1,9 @@
+# Full-system journey
+
+The latest video is the **40-second full-system tour**: [English](vantah-system-tour-en.mp4) · [Arabic subtitles](vantah-system-tour-ar.mp4). It keeps the whole desktop visible and tells the project story with simple subtitles. [Recording details and rebuilding instructions](system-tour.md).
+
+The earlier short close-up edits are preserved below.
+
 # White / blue desktop promos
 
 Two clean 15-second portrait edits, starting in the real Appearance settings:

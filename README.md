@@ -165,6 +165,6 @@ the tested controls and limitations. The revised multistage Docker image has not
 been validated from a clean build. The earlier v0.1.1 image and installer were
 built and booted, and the patched noVNC keyboard regression passed.
 
-## TikTok videos
+## Full-system video
 
-Watch the clean white/blue [English](docs/social/vantah-tiktok-en.mp4) or [Arabic](docs/social/vantah-tiktok-ar.mp4) 15-second promo: Settings first, eased close-ups of glass and the dock, three large captions, and a soft original soundtrack. [Subtitle files, soundtrack and rebuilding instructions](docs/social/README.md).
+Watch the [English](docs/social/vantah-system-tour-en.mp4) or [Arabic subtitles](docs/social/vantah-system-tour-ar.mp4) 40-second journey through vAntah. The real recording installs and runs a terminal app, opens Files, edits a document, adjusts glass and switches language. [Recording, subtitles and rebuild instructions](docs/social/system-tour.md).

@@ -1,6 +1,6 @@
 # Full-system journey
 
-The latest video is the **40-second full-system tour**: [English](vantah-system-tour-en.mp4) · [Arabic subtitles](vantah-system-tour-ar.mp4). It centers the whole desktop over a full-screen blur, with a personal story about Linux, iOS style, Raspberry Pi robotics and Arabic, plus small emoji stickers. [Recording details and rebuilding instructions](system-tour.md).
+The latest video is the **15-second full-system tour**: [English](vantah-system-tour-en.mp4) · [Arabic subtitles](vantah-system-tour-ar.mp4). The entire 140-second recording is sped up 9⅓×, with no sections removed. It centers the whole desktop over a full-screen blur, with a corrected story about taking Linux and editing it, with iOS style, Raspberry Pi robotics goals and Arabic, plus small emoji stickers. [Recording details and rebuilding instructions](system-tour.md).
 
 The earlier short close-up edits are preserved below.
 

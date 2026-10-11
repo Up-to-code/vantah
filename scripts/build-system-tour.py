@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a 40-second TikTok story: centered full desktop over live blur.
+"""Speed the entire long recording into a 15-second TikTok story: centered full desktop over live blur.
 Requires ffmpeg, ffprobe, Pillow, arabic-reshaper and python-bidi.
 """
 from pathlib import Path
@@ -11,23 +11,19 @@ from bidi.algorithm import get_display
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'docs/social'
-DURATION=40
-RANGES=[(0,5),(5,10),(10,16),(16,20),(20,25),(25,34),(34,40)]
+DURATION=15
+RANGES=[(0,3),(3,6),(6,9),(9,12),(12,15)]
 LINES={
-'en': [ ['I want Linux', 'for Raspberry Pi robotics.'],
-        ['But I love', 'the iOS look.'],
-        ['So I reshaped Linux', 'into my own workspace.'],
-        ['My tools. My files.', 'My way of working.'],
-        ['I want it small,', 'and sized for my workspace.'],
-        ['I speak Arabic.', 'So I made my desktop Arabic too.'],
-        ['This is vAntah.', 'Up-to-code/vantah on GitHub.'] ],
-'ar': [ ['أريد لينكس', 'لروبوتات راسبيري باي.'],
-        ['لكنني أحب', 'أسلوب iOS.'],
-        ['لذلك أعدت تشكيل لينكس', 'ليصبح مساحة عملي الخاصة.'],
-        ['أدواتي. ملفاتي.', 'وطريقتي في العمل.'],
-        ['أريده صغيرًا،', 'وبحجم يناسب مساحة عملي.'],
-        ['أنا أتحدث العربية.', 'لذلك جعلت سطح مكتبي عربيًا أيضًا.'],
-        ['هذا هو vAntah.', 'Up-to-code/vantah على GitHub.'] ]}
+'en': [ ["I didn't build an OS", 'from scratch.'],
+        ['I took Linux', 'and edited it my way.'],
+        ['iOS style.', 'Raspberry Pi robotics goals.'],
+        ['My workspace.', 'Now with Arabic support.'],
+        ['vAntah.', 'Up-to-code/vantah on GitHub.'] ],
+'ar': [ ['لم أبنِ نظام تشغيل', 'من الصفر.'],
+        ['أخذت لينكس', 'وعدّلته بطريقتي.'],
+        ['أسلوب iOS.', 'وهدفي روبوتات راسبيري باي.'],
+        ['مساحة عملي.', 'والآن تدعم العربية.'],
+        ['vAntah.', 'Up-to-code/vantah على GitHub.'] ]}
 
 def run(*args): subprocess.run(args,check=True)
 
@@ -109,6 +105,6 @@ def main():
                 rows=[(f'{i+1}\n' if srt else '')+f'{stamp(a,srt)} --> {stamp(b,srt)}\n'+'\n'.join(lines)
                       for i,((a,b),lines) in enumerate(zip(RANGES,captions))]
                 (OUT/f'vantah-system-tour-{lang}.{ext}').write_text(('' if srt else 'WEBVTT\n\n')+'\n\n'.join(rows)+'\n')
-            run('ffmpeg','-v','error','-y','-ss','14','-i',str(OUT/f'vantah-system-tour-{lang}.mp4'),
+            run('ffmpeg','-v','error','-y','-ss','5.5','-i',str(OUT/f'vantah-system-tour-{lang}.mp4'),
                 '-frames:v','1',str(OUT/f'vantah-system-tour-{lang}-poster.jpg'))
 if __name__=='__main__': main()

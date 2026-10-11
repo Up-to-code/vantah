@@ -9,6 +9,9 @@ The published v0.1.1 installer below still provides the earlier Picom demo.
 
 Running KWin Glass desktop with MacTahoe icons:
 
+[Side-by-side macOS 27 comparison](docs/visual-comparison.html) records the visual
+adjustments and remaining fidelity differences.
+
 ![KWin Glass launcher and dock](docs/screenshots/kwin-glass.jpg)
 
 Earlier v0.1.1 Docker demo:

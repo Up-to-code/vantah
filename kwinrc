@@ -10,7 +10,7 @@ slideEnabled=false
 slidingpopupsEnabled=true
 
 [Effect-blurplus]
-EdgeLighting=true
+EdgeLighting=false
 GlowColor=#20FFFFFF
 FakeBlur=false
 BlurMatching=false
@@ -20,16 +20,16 @@ BlurMenus=true
 TransparentBlur=true
 BlurStrength=8
 NoiseStrength=0
-TopCornerRadius=18
-BottomCornerRadius=18
-DockCornerRadius=24
-MenuCornerRadius=18
-Brightness=0.82
-Saturation=1.15
-Contrast=1.05
-RefractionStrength=0.30
-RefractionEdgeSize=12
-RefractionRGBFringing=0.025
+TopCornerRadius=16
+BottomCornerRadius=16
+DockCornerRadius=20
+MenuCornerRadius=12
+Brightness=0.98
+Saturation=1.0
+Contrast=1.0
+RefractionStrength=0.12
+RefractionEdgeSize=6
+RefractionRGBFringing=0.0
 
 [org.kde.kdecoration2]
 library=org.kde.kwin.aurorae

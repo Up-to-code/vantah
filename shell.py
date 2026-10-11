@@ -145,7 +145,7 @@ class Shell:
         if not widget.get_realized():
             return
         width, height = allocation.width, allocation.height
-        radius = min(24, height // 2)
+        radius = min(20, height // 2)
         region = cairo.Region()
         for row in range(height):
             distance = max(0, radius - row - 0.5, row - (height - radius) + 0.5)
@@ -243,7 +243,7 @@ class Shell:
             _, x, y = self.display.get_default_seat().get_pointer().get_position()
         g = self.geometry
         win.move(max(g.x + 6, min(x, g.x + g.width - w - 6)),
-                 max(g.y + 40, min(y, g.y + g.height - h - 10)))
+                 max(g.y + 34, min(y, g.y + g.height - h - 10)))
         win.present_with_time(Gtk.get_current_event_time())
 
     def panel_action(self, box, label, callback):
@@ -430,15 +430,15 @@ class Shell:
         self.apps_button.set_visible(g.width >= 600)
         self.session_button.set_visible(g.width >= 700)
         self.active_label.set_max_width_chars(24 if g.width >= 700 else 14)
-        self.bar.set_size_request(g.width, 34)
-        self.bar.resize(g.width, 34)
+        self.bar.set_size_request(g.width, 28)
+        self.bar.resize(g.width, 28)
         self.bar.move(g.x, g.y)
         width = min(self.dock_box.get_preferred_width()[1], g.width - 16)
         height = self.dock_box.get_preferred_height()[1]
         self.dock.resize(width, height)
-        self.dock.move(g.x + (g.width - width) // 2, g.y + g.height - height - 12)
-        self.reserve(self.bar, top=34)
-        self.reserve(self.dock, bottom=98)
+        self.dock.move(g.x + (g.width - width) // 2, g.y + g.height - height - 8)
+        self.reserve(self.bar, top=28)
+        self.reserve(self.dock, bottom=90)
         return False
 
     def reserve(self, window, top=0, bottom=0):
@@ -498,10 +498,10 @@ class Shell:
             self.build_launcher()
         self.entry.set_text('')
         width = min(760, self.geometry.width - 32)
-        columns = max(1, (width - 40) // 110)
+        columns = max(1, (width - 48) // 140)
         rows = math.ceil(len(self.app_infos) / columns)
-        height = min(520, self.geometry.height - 130, max(360, rows * 104 + 145))
-        self.results.set_max_children_per_line(max(1, (width - 40) // 100))
+        height = min(520, self.geometry.height - 130, max(360, rows * 116 + 156))
+        self.results.set_max_children_per_line(max(1, (width - 48) // 140))
         self.launcher.set_size_request(width, height)
         self.launcher.show_all()
         self.filter_apps()
@@ -579,7 +579,7 @@ class Shell:
         self.results.set_homogeneous(True)
         self.results.set_valign(Gtk.Align.START)
         self.results.set_min_children_per_line(1)
-        self.results.set_column_spacing(8)
+        self.results.set_column_spacing(12)
         self.results.set_row_spacing(10)
         self.results.set_activate_on_single_click(True)
         self.results.connect('child-activated', lambda _, child: self.launch(child.app))
@@ -762,10 +762,14 @@ class Shell:
             child.set_tooltip_text(app.get_display_name())
             child.get_accessible().set_name(app.get_display_name())
             content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=7)
-            content.pack_start(self.icon(app.get_id(), 'application-x-executable', 48), False, False, 0)
+            content.pack_start(self.icon(app.get_id(), 'application-x-executable', 56), False, False, 0)
             label = style(Gtk.Label(label=app.get_display_name()), 'app-name')
             label.set_ellipsize(Pango.EllipsizeMode.END)
-            label.set_max_width_chars(11)
+            label.set_max_width_chars(18)
+            label.set_line_wrap(True)
+            label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+            label.set_lines(2)
+            label.set_justify(Gtk.Justification.CENTER)
             content.pack_start(label, False, False, 0)
             child.add(content)
             self.results.add(child)

@@ -51,3 +51,21 @@ macOS 27 assets. Software-rendered glass and VNC updates visibly lag input.
 Rams quick_review was requested with `via: rules` in its review context (the tool
 has no separate `via` parameter). It returned an exhausted review-credit error,
 so there is no Rams score or successful automated review to report.
+
+## Reference comparison follow-up
+
+Compared the running shell against Apple's macOS 27 search capsule, Siri desktop
+window/dock, and official component-kit preview. A side-by-side HTML page links
+Apple-hosted images alongside native-resolution vAntah screenshots. The references
+use different content and scale; no numeric pixel-diff equivalence is claimed.
+
+Applied a 28px menu bar, 24px search text, larger 56px launcher icons, two-line
+application labels and fewer grid columns. Menus now use shorter rows and a blue
+selection. Dock/glass saturation is neutral, edge lighting is disabled and
+refraction is narrower. Aurorae uses a 28px title strip and smaller 12px buttons.
+
+The running shell was rebooted with these changes. Visually verified full launcher
+labels, menu spacing, live glass, and window controls. Python syntax, shell syntax
+and the five installer regressions passed. Rams again returned an exhausted-credit
+error. Exact native app layouts, bottom client corners, Apple typography/icons and
+optics remain different; these changes do not certify an exact macOS reproduction.

@@ -29,6 +29,10 @@ for color in Light Dark; do
   mkdir -p "$dest"
   cp "$build_root/MacTahoe-kde/aurorae/$theme/decoration.svg" "$dest/"
   cp "$build_root/MacTahoe-kde/aurorae/${color}rc" "$dest/${theme}rc"
+  # Smaller controls and a 28px title strip, following the Apple reference.
+  sed -i -e 's/ButtonWidth=16/ButtonWidth=12/' -e 's/ButtonHeight=16/ButtonHeight=12/' \
+    -e 's/ButtonSpacing=10/ButtonSpacing=8/' -e 's/TitleEdgeTop=8/TitleEdgeTop=6/' \
+    -e 's/TitleEdgeBottom=8/TitleEdgeBottom=6/' "$dest/${theme}rc"
   cp "$build_root/MacTahoe-kde/aurorae/icons-$color/"*.svg "$dest/"
   cp "$build_root/MacTahoe-kde/aurorae/metadata.desktop" "$build_root/MacTahoe-kde/aurorae/metadata.json" "$dest/"
   sed -i "s/theme_name/$theme/g" "$dest/metadata.desktop" "$dest/metadata.json"

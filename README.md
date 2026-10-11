@@ -9,7 +9,7 @@ The published v0.1.1 installer below still provides the earlier Picom demo.
 
 Running KWin Glass desktop:
 
-![KWin Glass launcher and dock](docs/screenshots/kwin-glass.png)
+![KWin Glass launcher and dock](docs/screenshots/kwin-glass.jpg)
 
 Earlier v0.1.1 Docker demo:
 

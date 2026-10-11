@@ -2,6 +2,7 @@
 from pathlib import Path
 
 symbols = {
+    'trash': '''<path d="M13 17H51L47 51Q46 56 41 56H23Q18 56 17 51Z" fill="#60646a" fill-opacity=".4" stroke="#bfc4ce" stroke-width="1.5"/><ellipse cx="32" cy="17" rx="19" ry="4" fill="#303237" stroke="#e3e5ea" stroke-width="1.5"/><path d="M20 26L23 48M32 27V49M44 26L41 48" stroke="#ffffff" stroke-opacity=".1" stroke-width="2"/>''',
     'files': '''<path d="M8 22V16Q8 11 13 11H27L33 18H51Q56 18 56 23V49Q56 54 51 54H13Q8 54 8 49Z" fill="url(#blue)"/>
 <path d="M8 26H56V49Q56 54 51 54H13Q8 54 8 49Z" fill="#17c7fa"/>
 <path d="M10 27H54" stroke="#7ce8ff" stroke-width="2" stroke-opacity=".65"/>

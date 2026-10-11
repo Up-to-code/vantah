@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 container="${1:-alpine-gui}"
 revision=0ae94cf5e709a894a9f1f54544cb17deb7f77d58
 kwin_revision=f53992fd00bd446c478adda5d4cf8b588cb32b75
-docker exec -u 0 "$container" apk add --no-cache py3-gobject3 py3-cairo libwnck3 xprop tzdata \
+docker exec -u 0 "$container" apk add --no-cache py3-gobject3 py3-cairo gvfs libwnck3 xprop tzdata \
   xvfb x11vnc kwin breeze breeze-cursors mesa-dri-gallium mesa-gl qt6-qtsensors
 docker cp gtk-menus.css "$container":/tmp/vantah-gtk-menus.css
 docker cp sandbox/install-appearance.sh "$container":/tmp/vantah-install-appearance.sh

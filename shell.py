@@ -19,6 +19,7 @@ gi.require_version('Wnck', '3.0')
 from gi.repository import Gdk, GdkPixbuf, GdkX11, Gio, GLib, Gtk, Pango, Wnck
 import cairo
 from gtk_menu_glass import GtkMenuGlass
+from desktop_apps import SettingsWindow, FilesWindow, tr
 
 ROOT = Path(__file__).resolve().parent
 PID_FILE = Path(f'/tmp/alpine-shell-{os.getuid()}.pid')
@@ -76,16 +77,19 @@ class Shell:
         self.category = 'All'
         self.app_infos = self.installed_apps()
         self.pins = [
-            ('thunar.desktop', 'Files', 'system-file-manager', ('thunar',)),
+            ('thunar.desktop', 'Files', 'system-file-manager', ('thunar', 'vantah-files')),
             ('xfce4-terminal.desktop', 'Terminal', 'utilities-terminal', ('xfce4-terminal',)),
             ('org.xfce.mousepad.desktop', 'Text Editor', 'accessories-text-editor', ('mousepad', 'org.xfce.mousepad')),
-            ('xfce-settings-manager.desktop', 'Settings', 'preferences-system', ('xfce4-settings-manager',)),
+            ('xfce-settings-manager.desktop', 'Settings', 'preferences-system', ('xfce4-settings-manager', 'vantah-settings')),
         ]
         self.pin_widgets = []
         self.icon_pixbufs = {}
         self.mode_items = {}
         self.settings_path = Path.home() / '.config/alpine-shell/settings.json'
-        self.preferences = {'dark': True, 'reduced_motion': False}
+        self.preferences = {'dark': True, 'reduced_motion': False, 'language': 'en', 'glass_tint': .28}
+        self.app_windows = {}
+        self.glass_provider = Gtk.CssProvider()
+        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), self.glass_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
         if self.settings_path.exists():
             try:
                 self.preferences.update(json.loads(self.settings_path.read_text()))
@@ -253,6 +257,7 @@ class Shell:
         win.present_with_time(Gtk.get_current_event_time())
 
     def panel_action(self, box, label, callback):
+        label = tr(self, label)
         def activate():
             self.close_panels()
             callback()
@@ -274,7 +279,7 @@ class Shell:
         box.pack_start(Gtk.Separator(), False, False, 7)
         self.mode_items = {}
         for name, key in [('Dark appearance', 'dark'), ('Reduce motion', 'reduced_motion')]:
-            item = style(Gtk.CheckButton(label=name), 'menu-toggle')
+            item = style(Gtk.CheckButton(label=tr(self, name)), 'menu-toggle')
             item.set_active(self.preferences[key])
             item.connect('toggled', lambda obj, k=key: self.change_mode(k, obj.get_active()))
             self.mode_items[key] = item
@@ -299,7 +304,7 @@ class Shell:
         self.active_label.set_ellipsize(Pango.EllipsizeMode.END)
         self.active_label.set_max_width_chars(24)
         box.pack_start(self.active_label, False, False, 9)
-        self.apps_button = button('Applications', self.toggle_launcher)
+        self.apps_button = button(tr(self, 'Applications'), self.toggle_launcher)
         box.pack_start(self.apps_button, False, False, 0)
         box.pack_start(Gtk.Box(), True, True, 0)
         self.session_button = button('sandbox', self.session_menu, 'Session information')
@@ -317,21 +322,10 @@ class Shell:
                    (Path.home() / '.local/share/icons', Path('/usr/share/icons')))
 
     def icon(self, app_id, fallback, size):
-        if self.has_tahoe_icons():
-            themed = {'thunar.desktop': 'system-file-manager',
-                      'xfce4-terminal.desktop': 'utilities-terminal',
-                      'org.xfce.mousepad.desktop': 'accessories-text-editor',
-                      'xfce-settings-manager.desktop': 'preferences-system',
-                      'xfce4-appfinder.desktop': 'view-app-grid'}
-            name = themed.get(app_id, 'view-app-grid' if fallback == 'view-app-grid-symbolic' else None)
-            if name:
-                image = Gtk.Image.new_from_icon_name(name, Gtk.IconSize.DIALOG)
-                image.set_pixel_size(size)
-                return image
         custom = {'thunar.desktop': 'files', 'xfce4-terminal.desktop': 'terminal',
-                  'org.xfce.mousepad.desktop': 'editor', 'xfce-settings-manager.desktop': 'settings'}
+                  'org.xfce.mousepad.desktop': 'editor', 'xfce-settings-manager.desktop': 'settings', 'vantah-trash': 'trash'}
         name = custom.get(app_id, 'applications' if fallback == 'view-app-grid-symbolic' else None)
-        if not self.has_tahoe_icons() and name and (ROOT / 'icons' / f'{name}.svg').exists():
+        if name and (ROOT / 'icons' / f'{name}.svg').exists():
             return Gtk.Image.new_from_pixbuf(self.custom_pixbuf(name, size))
         app = Gio.DesktopAppInfo.new(app_id) if app_id else None
         if app and app.get_icon():
@@ -353,12 +347,19 @@ class Shell:
             self.dock_box.pack_start(item, False, False, 0)
         self.extras = Gtk.Box(spacing=2)
         self.dock_box.pack_start(self.extras, False, False, 0)
+        self.dock_box.pack_start(style(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), "dock-separator"), False, False, 8)
+        trash, _ = self.dock_item("vantah-trash", "Trash", "user-trash", self.show_trash)
+        self.dock_box.pack_start(trash, False, False, 0)
 
     def dock_item(self, app_id, name, icon_name, action, window=None):
-        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        outer = Gtk.Overlay()
+        outer.set_size_request(72, 88)
         obj = style(Gtk.Button(), 'dock-button')
-        obj.set_tooltip_text(name)
-        obj.get_accessible().set_name(name)
+        obj.set_valign(Gtk.Align.CENTER)
+        obj.set_halign(Gtk.Align.CENTER)
+        obj.tooltip_name = name
+        obj.set_tooltip_text(tr(self, name))
+        obj.get_accessible().set_name(tr(self, name))
         obj.connect('clicked', lambda _: action())
         if window and self.has_tahoe_icons():
             icon_name = (window.get_class_group_name() or 'application-x-executable').casefold()
@@ -372,14 +373,19 @@ class Shell:
             image = self.icon(app_id, icon_name, 44)
         obj.add(image)
         image.app_id, image.fallback = app_id, icon_name
-        obj.set_size_request(56, 56)
-        obj.connect('enter-notify-event', lambda *_: self.animate_icon(image, 54))
-        obj.connect('leave-notify-event', lambda *_: self.animate_icon(image, 48))
-        self.resize_icon(image, 48)
+        obj.set_size_request(72, 72)
+        obj.connect('enter-notify-event', lambda *_: self.animate_icon(image, 68))
+        obj.connect('leave-notify-event', lambda *_: self.animate_icon(image, 64))
+        self.resize_icon(image, 64)
         obj.connect('button-press-event', lambda _, e: self.dock_context(e, app_id, window))
         dot = style(Gtk.Label(label=''), 'running-dot')
-        outer.pack_start(obj, False, False, 0)
-        outer.pack_start(dot, False, False, 0)
+        dot.set_size_request(-1, 8)
+        dot.set_valign(Gtk.Align.END)
+        dot.set_halign(Gtk.Align.CENTER)
+        outer.add(obj)
+        outer.add_overlay(dot)
+        outer.set_overlay_pass_through(dot, True)
+        # Indicators overlay the bottom lane without contributing to icon layout.
         return outer, dot
 
     def dock_context(self, event, app_id, window):
@@ -415,13 +421,65 @@ class Shell:
             workspace.activate(time)
         window.activate(time)
 
+    def show_files(self):
+        window = self.app_windows.setdefault("files", None)
+        if window is None:
+            window = self.app_windows["files"] = FilesWindow(self)
+        window.show_view()
+        return window
+
+    def show_trash(self):
+        window = self.show_files()
+        window.navigate(Gio.File.new_for_uri("trash:///"))
+
+    def show_settings(self):
+        window = self.app_windows.setdefault("settings", None)
+        if window is None:
+            window = self.app_windows["settings"] = SettingsWindow(self)
+        window.show_view()
+
+    def change_language(self, language):
+        if language not in ("en", "ar") or self.preferences["language"] == language:
+            return
+        self.preferences["language"] = language
+        self.save_preferences()
+        self.apps_button.set_label(tr(self, "Applications"))
+        self.close_panels()
+        if self.launcher:
+            self.launcher.destroy(); self.launcher = None
+        for container in self.dock_box.get_children():
+            def translate_tooltip(widget):
+                tooltip = getattr(widget, "tooltip_name", None)
+                if tooltip:
+                    widget.set_tooltip_text(tr(self, tooltip))
+                    widget.get_accessible().set_name(tr(self, tooltip))
+                if isinstance(widget, Gtk.Container):
+                    for child in widget.get_children(): translate_tooltip(child)
+            translate_tooltip(container)
+        self.update()
+        for win in self.app_windows.values():
+            if win and win.get_visible():
+                GLib.idle_add(win.refresh_language)
+
+    def change_glass(self, value):
+        self.preferences["glass_tint"] = value
+        self.glass_provider.load_from_data((".kwin .dock, .kwin .app-sidebar { background: rgba(36,36,38," + str(value) + "); } .kwin.light .dock, .kwin.light .app-sidebar { background: rgba(242,246,255," + str(value) + "); }").encode())
+        self.save_preferences()
+
     def launch_id(self, app_id):
+        if app_id == "thunar.desktop":
+            self.show_files(); return
+        if app_id == "xfce-settings-manager.desktop":
+            self.show_settings(); return
         app = Gio.DesktopAppInfo.new(app_id)
         if app:
             self.launch(app)
 
     def launch(self, app):
         print(f'Launch application: {app.get_id()}', flush=True)
+        if app.get_id() in ('thunar.desktop', 'xfce-settings-manager.desktop'):
+            if self.launcher: self.launcher.hide()
+            self.launch_id(app.get_id()); return
         if self.launcher:
             self.launcher.hide()
         try:
@@ -444,7 +502,7 @@ class Shell:
         self.dock.resize(width, height)
         self.dock.move(g.x + (g.width - width) // 2, g.y + g.height - height - 8)
         self.reserve(self.bar, top=28)
-        self.reserve(self.dock, bottom=90)
+        self.reserve(self.dock, bottom=106)
         return False
 
     def reserve(self, window, top=0, bottom=0):
@@ -459,10 +517,10 @@ class Shell:
         if active and not active.is_skip_tasklist():
             name = active.get_class_group_name() or 'Desktop'
             friendly = {'thunar': 'Files', 'xfce4-terminal': 'Terminal', 'mousepad': 'Text Editor', 'org.xfce.mousepad': 'Text Editor',
-                        'xfce4-settings-manager': 'Settings'}
-            self.active_label.set_text(friendly.get(name.casefold(), name))
+                        'xfce4-settings-manager': 'Settings', 'vantah-settings': 'Settings', 'vantah-files': 'Files'}
+            self.active_label.set_text(tr(self, friendly.get(name.casefold(), name)))
         elif not active or active.get_window_type() == Wnck.WindowType.DESKTOP:
-            self.active_label.set_text('Desktop')
+            self.active_label.set_text(tr(self, 'Desktop'))
         windows = self.windows()
         for classes, dot, item in self.pin_widgets:
             matched = [w for w in windows if (w.get_class_group_name() or '').casefold() in classes]
@@ -549,13 +607,13 @@ class Shell:
         head = style(Gtk.Box(spacing=8), 'launcher-search')
         self.search_surface = head
         self.entry = Gtk.SearchEntry()
-        self.entry.set_placeholder_text('Search applications')
+        self.entry.set_placeholder_text(tr(self, 'Search applications'))
         self.entry.get_accessible().set_name('Search installed applications')
         self.entry.connect('changed', lambda *_: self.filter_apps())
         self.entry.connect('activate', lambda *_: self.launch_first())
         search_overlay = Gtk.Overlay()
         search_overlay.add(self.entry)
-        self.search_hint = style(Gtk.Label(label='Search applications'), 'search-placeholder')
+        self.search_hint = style(Gtk.Label(label=tr(self, 'Search applications')), 'search-placeholder')
         self.search_hint.set_halign(Gtk.Align.START)
         self.search_hint.set_valign(Gtk.Align.CENTER)
         self.search_hint.set_margin_start(36)
@@ -571,7 +629,7 @@ class Shell:
         categories = Gtk.Box(spacing=5)
         self.category_buttons = {}
         for name in ['All', 'Accessories', 'Development', 'System']:
-            tab = style(Gtk.ToggleButton(label=name), 'category-tab')
+            tab = style(Gtk.ToggleButton(label=tr(self, name)), 'category-tab')
             tab.set_active(name == self.category)
             tab.connect('clicked', lambda _, value=name: self.choose_category(value))
             self.category_buttons[name] = tab
@@ -591,7 +649,7 @@ class Shell:
         self.results.connect('child-activated', lambda _, child: self.launch(child.app))
         scroll.add(self.results)
         card.pack_start(scroll, True, True, 0)
-        self.empty_result = style(Gtk.Label(label='No matching applications'), 'empty-result')
+        self.empty_result = style(Gtk.Label(label=tr(self, 'No matching applications')), 'empty-result')
         self.empty_result.set_no_show_all(True)
         card.pack_start(self.empty_result, False, False, 0)
         self.result_status = style(Gtk.Label(label=''), 'launcher-hint')
@@ -618,7 +676,7 @@ class Shell:
         self.settings_path.write_text(json.dumps(self.preferences, indent=2) + '\n')
 
     def apply_appearance(self):
-        for win in (self.bar, self.dock, self.launcher, *self.panels.values()):
+        for win in (self.bar, self.dock, self.launcher, *self.panels.values(), *self.app_windows.values()):
             if win:
                 self.style_appearance(win)
         dark = self.preferences['dark']
@@ -654,6 +712,7 @@ class Shell:
                                 '--key', key, value], check=False)
             subprocess.run(['gdbus', 'call', '--session', '--dest', 'org.kde.KWin', '--object-path', '/KWin',
                             '--method', 'org.kde.KWin.reconfigure'], stdout=subprocess.DEVNULL, check=False)
+        self.change_glass(self.preferences['glass_tint'])
         self.appearance_button.set_label('☀' if dark else '☾')
         self.appearance_button.set_tooltip_text('Switch to light mode' if dark else 'Switch to dark mode')
         for key, item in self.mode_items.items():
@@ -677,7 +736,7 @@ class Shell:
     def animate_icon(self, image, target):
         image.animation_target = target
         if self.preferences['reduced_motion']:
-            self.resize_icon(image, 48)
+            self.resize_icon(image, 64)
             return False
         if getattr(image, 'animation_active', False):
             return False
@@ -685,7 +744,7 @@ class Shell:
         image.animation_size = float(getattr(image, 'current_size', 48))
         def frame():
             if self.preferences['reduced_motion']:
-                self.resize_icon(image, 48)
+                self.resize_icon(image, 64)
                 image.animation_active = False
                 return False
             image.animation_size += (image.animation_target - image.animation_size) * 0.25
@@ -703,10 +762,10 @@ class Shell:
             return
         image.current_size = size
         custom = {'thunar.desktop': 'files', 'xfce4-terminal.desktop': 'terminal',
-                  'org.xfce.mousepad.desktop': 'editor', 'xfce-settings-manager.desktop': 'settings'}
+                  'org.xfce.mousepad.desktop': 'editor', 'xfce-settings-manager.desktop': 'settings', 'vantah-trash': 'trash'}
         name = custom.get(getattr(image, 'app_id', None),
                           'applications' if getattr(image, 'fallback', '') == 'view-app-grid-symbolic' else None)
-        if name and not self.has_tahoe_icons():
+        if name:
             image.set_from_pixbuf(self.custom_pixbuf(name, size))
         else:
             image.set_pixel_size(size)
@@ -781,7 +840,7 @@ class Shell:
             self.results.add(child)
         self.results.show_all()
         self.empty_result.set_visible(not filtered)
-        self.result_status.set_text(f'{len(filtered)} applications  ·  Enter to open  ·  Esc to close')
+        self.result_status.set_text(f'{len(filtered)} ' + tr(self, 'applications  ·  Enter to open  ·  Esc to close'))
         if filtered:
             self.results.select_child(self.results.get_child_at_index(0))
 

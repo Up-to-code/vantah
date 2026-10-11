@@ -36,8 +36,8 @@ using KWin X11 6.5.6, Mesa software rendering and noVNC in the Codex browser.
 
 ## Limits
 
-Native-resolution screenshots: [launcher](screenshots/kwin-glass.jpg) and
-[window frames](screenshots/window-tahoe.jpg). The browser was temporarily tested
+Native-resolution screenshots: [launcher](screenshots/launcher.jpg) and
+[window frames](screenshots/editor.jpg). The browser was temporarily tested
 at the framebuffer resolution to check clipping without VNC scaling, then reset.
 
 These are smoke checks of the existing sandbox, not exhaustive testing of every
@@ -97,3 +97,17 @@ selection rendering and optical equivalence remain unproven.
 The final launcher check also verified explicit visible-region blur with an
 empty force-blur whitelist, and a shell-class exclusion in the corner effect.
 This prevents filling the gap between the search capsule and application grid.
+
+## Native Settings / Files / dock follow-up
+
+- Replaced the icon-plus-dot vertical stack with an overlay: a 72px icon target is centered inside an 88px cell, and the dot is independently bottom-aligned. Dock top/bottom padding is symmetric. Added a separated final Trash slot and regenerated all original SVG dock tiles.
+- Added native Settings sections for Appearance, Language and About. Dark mode, reduced motion, glass tint and English/Arabic selection persist in the existing preference file. Storage reads the actual home filesystem. Tint was exercised live in both appearance modes.
+- Added native Files browsing, current-directory search, default-app opening, new folders, real Gio/GVfs Trash and no-overwrite restoration. Selection is retained when Trash refreshes. GVfs Trash discovery is asynchronous; the view refreshes while visible, and the integration test waits for the real service rather than assuming immediate cache updates.
+- Arabic labels are shaped by GTK/Pango. Settings and Files mirror their navigation, controls and file list. Paths remain left-to-right. The native titlebar controls mirror in Arabic too. External applications and app metadata retain their own language configuration.
+- Replaced the external frame on vAntah Settings/Files with a 32px native titlebar, traffic-light buttons, dragging, maximizing/minimizing and a bottom-right resize target. The entire client is clipped to 16px corners and requests a matching compositor blur region. This removes the white rectangular lower frame seen in light-mode testing. Maximized native windows use square corners.
+- Hid the old Xfce desktop icons. Files navigation and the new dock remain available. The previous screenshots were removed and replaced by actual current captures. The wallpaper and owner-supplied logo remain original project assets.
+- Automated checks: 2 real-display desktop integration tests, 4 GTK menu region tests and 8 installer orchestration tests passed; Python compilation, GTK stylesheet loading, shell syntax and diff whitespace checks passed. Installer tests mock Docker/network operations; they do not prove a clean image build.
+- Manual walkthrough: opened and edited a real document, saved it, moved it to Trash and restored it. Confirmed its saved contents on disk. Application filtering opened Terminal; `echo vAntah` ran with ordinary `e` typing. Light/dark and Arabic/English switching were observed live.
+- Exported and probed the actual 15-second desktop tour; source footage and timing are described in `recording.md`.
+- Rams quick_review was requested with `via: rules` context after the UI changes. The service rejected every attempt because this workspace's 15 review credits were exhausted. No Rams findings were returned or claimed fixed. Manual review covered layout, text direction, native actions and corner rendering.
+- Fresh Docker image builds, x86_64/old-PC hardware and native host-desktop installation remain unvalidated. The source installer is provided; exact Apple pixel equality, complete Finder functionality and Apple's own Liquid Glass optics are not claimed.

@@ -5,7 +5,7 @@ COPY sandbox/build-rounded-corners.sh /tmp/vantah-build/
 RUN sh /tmp/vantah-build/build-rounded-corners.sh
 
 FROM alpine:3.24.2
-RUN apk add --no-cache xfce4 xfce4-terminal xvfb x11vnc novnc websockify dbus dbus-x11 font-dejavu adwaita-icon-theme mousepad py3-gobject3 py3-cairo libwnck3 xprop tzdata kwin breeze breeze-cursors mesa-dri-gallium mesa-gl qt6-qtsensors \
+RUN apk add --no-cache xfce4 xfce4-terminal xvfb x11vnc novnc websockify dbus dbus-x11 font-dejavu adwaita-icon-theme mousepad py3-gobject3 py3-cairo gvfs libwnck3 xprop tzdata kwin breeze breeze-cursors mesa-dri-gallium mesa-gl qt6-qtsensors \
     && adduser -D -u 1000 sandbox \
     && mkdir -p /home/sandbox/.config/autostart /home/sandbox/.local/share/alpine-shell /workspace
 COPY gtk-menus.css /tmp/vantah-gtk-menus.css

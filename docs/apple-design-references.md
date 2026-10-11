@@ -59,3 +59,14 @@ Software rendering and noVNC scaling affect animation smoothness and perceived
 sharpness. No Siri service, voice assistant or Apple Intelligence backend is
 implemented. Further exact matching requires component-by-component measurements,
 not stronger claims about this theme package.
+
+## Settings, Files and Arabic follow-up — 11 October 2026
+
+- [iOS 27 design refinements](https://www.apple.com/os/ios/): contrast, refraction and a clear-to-tinted slider informed vAntah's tint control. This is a similar control, not the same renderer.
+- [Apple design resources](https://developer.apple.com/design/resources/): official iOS/iPadOS 27 and macOS 27 kits and icon templates. The public preview informed grouped Settings rows. Full exact measurements were not extracted from the restricted Figma files.
+- [Language & Region settings](https://support.apple.com/guide/mac-help/change-language-region-settings-on-mac-intl163/mac): language changes belong in a dedicated section.
+- [Finder settings](https://support.apple.com/en-ie/guide/mac-help/mchlp2803/27/mac/27): window/file/Trash behaviors informed the native file browser, rather than a static Finder mockup.
+- [Right-to-left layout guidance](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/SupportingRight-To-LeftLanguages/SupportingRight-To-LeftLanguages.html): mirror navigation and controls while preserving readable paths.
+- The user's supplied dark dock reference informed bigger dark tiles, separators, independent bottom dots and the final Trash slot. It is not bundled in this public repository.
+
+vAntah's dock icons are original editable SVG files under the project license, regenerated from `icons/generate.py`. MacTahoe remains the open-source icon/theme package for external Linux apps, not a redistributable dump of Apple's system icons. Wispr Flow is outside this task, per the user's clarification.

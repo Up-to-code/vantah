@@ -154,3 +154,35 @@ window#launcher-window.light, window#panel-window.light { color: #252735; }
 .kwin.light .launcher-search, .kwin.light .app-grid-card, .kwin.light .menu-card {
   background: rgba(248,248,250,0.74);
 }
+/* Fixed icon centers, independent indicators, and coordinated native applications. */
+.dock { padding: 8px 10px; }
+.dock-button { min-width: 72px; min-height: 72px; padding: 0; }
+.running-dot { min-height: 8px; font-size: 10px; padding: 0; margin: 0; color: #e2e2e6; }
+.active-dock-item .running-dot { color: #e2e2e6; }
+.desktop-app { background: transparent; color: #f5f5f7; font-family: Inter, sans-serif; }
+.app-sidebar { background: rgba(36,36,38,.28); padding: 18px 12px; }
+.app-content { background: rgba(28,28,30,.94); padding: 28px; }
+.app-heading { font-size: 25px; font-weight: 700; margin-bottom: 10px; }
+.sidebar-row { background: transparent; border: none; box-shadow: none; padding: 9px 12px; border-radius: 8px; }
+.sidebar-row.selected, .sidebar-row:hover { background: rgba(90,120,200,.25); }
+.settings-card { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.10); border-radius: 12px; padding: 4px 14px; }
+.settings-row { min-height: 50px; border-bottom: 1px solid rgba(255,255,255,.07); }
+.settings-row:last-child { border-bottom: none; }
+.files-toolbar { padding: 12px 18px; background: rgba(36,36,38,.75); }
+.desktop-app treeview { background: transparent; color: #f5f5f7; }
+.desktop-app treeview:selected { background: #2864dc; color: white; }
+.desktop-app treeview header button { background: transparent; border: none; box-shadow: none; }
+.light .app-content { background: rgba(246,246,248,.96); }
+.light.desktop-app, .light.desktop-app treeview { color: #202024; }
+.light .settings-card { background: rgba(255,255,255,.8); border-color: rgba(0,0,0,.08); }
+.light .settings-row { border-color: rgba(0,0,0,.07); }
+.light .files-toolbar { background: rgba(240,240,245,.75); }
+
+.native-titlebar { min-height: 32px; background: rgba(40,40,42,.90); }
+.light .native-titlebar { background: rgba(247,247,249,.90); }
+.native-titlebar button { min-height: 20px; min-width: 20px; padding: 0; border: none; background: transparent; box-shadow: none; }
+.traffic-light { min-width: 11px; min-height: 11px; margin: 4px; border-radius: 6px; }
+.traffic-close .traffic-light { background: #ff5f57; }
+.traffic-minimize .traffic-light { background: #febc2e; }
+.traffic-maximize .traffic-light { background: #28c840; }
+.native-titlebar button:focus { outline: 2px solid #8dbaff; outline-offset: 0; }

@@ -7,46 +7,34 @@ a refractive dock, application search, dark mode, and motion controls.
 The current source uses KWin X11 and the real KWin Glass compositor effect.
 The published v0.1.1 installer below still provides the earlier Picom demo.
 
-Running KWin Glass desktop with MacTahoe icons:
+![Native Settings and dock](docs/screenshots/settings-en.jpg)
 
-[Side-by-side macOS 27 comparison](docs/visual-comparison.html) records the visual
-adjustments and remaining fidelity differences.
+![Arabic Settings with mirrored layout](docs/screenshots/settings-ar.jpg)
 
-![KWin Glass launcher and dock](docs/screenshots/kwin-glass.jpg)
+Native Files, Trash restore, dark/light appearance, live compositor glass, and
+original dark dock tiles now share a coordinated interface. The running dots
+sit in an overlay at the bottom, so they cannot shift icon centers.
 
-Native GTK menu and compositor-rounded window:
+[15-second real desktop walkthrough](docs/vantah-tour.mp4) ·
+[Detailed installation guide](docs/install-guide.md) ·
+[دليل التثبيت والاستخدام بالعربية](docs/install-guide-ar.md) ·
+[Apple reference comparison](docs/visual-comparison.html)
 
-![Native GTK menu and rounded window](docs/screenshots/gtk-menus.jpg)
+## Try the current source
 
-Earlier v0.1.1 Docker demo:
-
-![Fresh dark desktop](docs/screenshots/fresh-demo.jpg)
-
-Application search in the themed sandbox:
-
-![Application search](docs/screenshots/applications.jpg)
-
-Download the source, logo, wallpaper, and screenshots from the
-[public v0.1.1 release](https://github.com/Up-to-code/vantah/releases/tag/v0.1.1).
-
-## One-command installer
-
-Requires Docker with a running Linux engine, `curl`, `tar`, and `shasum` or
-`sha256sum`. On macOS use Docker Desktop or Colima; on Linux use Docker Engine.
-Windows users can run the command inside WSL with Docker integration.
+Requires a running Docker Linux engine, Git and curl. The first build compiles
+KWin and needs substantial time and disk space:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Up-to-code/vantah/v0.1.1/try.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Up-to-code/vantah/main/try-current.sh | sh
 ```
 
-The installer downloads the versioned release, checks its SHA-256 checksum,
-builds the image for your machine, and starts a localhost-only desktop. Open the
-URL it prints. Running it again restarts the same container. Set `VANTAH_PORT`,
-`VANTAH_CONTAINER`, or `VANTAH_INSTALL_DIR` to customize it. It requires no sudo and
-does not install Docker or change your host desktop. Stop it with
-`docker stop vantah-demo`. Your container files remain available. If an earlier version already owns
-`vantah-demo`, use `VANTAH_CONTAINER=vantah-demo-v011` on the `sh` side of the
-installer command, and set a free `VANTAH_PORT`. Existing containers are preserved.
+This uses the current source and starts a localhost-only desktop in
+`vantah-current`. It preserves existing containers. The existing ARM64 sandbox
+upgrade was tested; a fresh clean image build and old-PC/x86_64 installations
+have not yet been validated. See the guide for resources, backup and troubleshooting.
+The historical [v0.1.1 release](https://github.com/Up-to-code/vantah/releases/tag/v0.1.1)
+remains available but contains the earlier Picom interface.
 
 ## Build from source
 
@@ -77,7 +65,7 @@ system assets or an exact macOS 27 theme. Inter is the desktop font.
 [Apple 27 and Siri reference catalog](docs/apple-design-references.md) records
 which official screenshots informed the work and what still differs.
 The wallpaper is an original project asset. vAntah uses the Qentrah logo supplied
-by the project owner. The earlier v0.1.1 demo screenshots retain its older appearance.
+by the project owner. Outdated demo screenshots have been replaced by current, real desktop captures.
 
 ## Native implementation
 

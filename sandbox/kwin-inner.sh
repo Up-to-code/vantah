@@ -20,6 +20,7 @@ for workspace in 0 1 2 3; do
   xfconf-query -c xfce4-desktop -p "$base/image-style" -n -t int -s 5
 done
 done
+xfconf-query -c xfce4-desktop -p /desktop-icons/style -n -t int -s 0
 xfdesktop --disable-wm-check > /tmp/vantah-desktop.log 2>&1 &
 desktop_pid=$!
 python3 "$root/shell.py"

@@ -20,7 +20,7 @@ class InstallerTests(unittest.TestCase):
         fixtures.mkdir()
         source = self.base / 'source' / 'vantah-v0.1.1'
         (source / 'sandbox').mkdir(parents=True)
-        (source / 'sandbox/run.sh').write_text((ROOT / 'sandbox/run.sh').read_text())
+        (source / 'sandbox/run.sh').write_text((ROOT / 'sandbox/run.sh').read_text().replace('org.qentrah.vantah=current', 'org.qentrah.vantah=v0.1.1'))
         archive = fixtures / 'vantah-v0.1.1.tar.gz'
         with tarfile.open(archive, 'w:gz') as handle:
             handle.add(source, arcname=source.name)
@@ -85,6 +85,34 @@ if os.environ.get('CORRUPT') and name.endswith('.tar.gz'): dest.write_bytes(b'co
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse((self.base/'install').exists())
 
+
+class CurrentInstallerTests(unittest.TestCase):
+    def run_source(self, state='missing', port='6081'):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp); scripts = base / 'bin'; scripts.mkdir(); calls = base / 'calls'
+            docker = scripts / 'docker'
+            docker.write_text(f"#!{sys.executable}\n" + "import os,sys\na=sys.argv[1:]\nwith open(os.environ['CALLS'],'a') as f:f.write(' '.join(a)+'\\n')\nif a[:2]==['container','inspect']:sys.exit(1 if os.environ['STATE']=='missing' else 0)\nif a[0]=='inspect':print('current' if os.environ['STATE']=='owned' else 'other')\nif a[0]=='port':print('127.0.0.1:6099')\n")
+            docker.chmod(0o755)
+            git = scripts / 'git'
+            git.write_text(f"#!{sys.executable}\n" + "import os,sys,pathlib,shutil\np=pathlib.Path(sys.argv[-1])/'sandbox';p.mkdir(parents=True)\nshutil.copyfile(os.environ['RUN_SCRIPT'],p/'run.sh')\n")
+            git.chmod(0o755)
+            env = dict(os.environ, PATH=str(scripts)+os.pathsep+os.environ['PATH'], STATE=state,
+                       CALLS=str(calls), RUN_SCRIPT=str(ROOT/'sandbox/run.sh'), VANTAH_PORT=port)
+            result = subprocess.run(['sh',str(ROOT/'try-current.sh')],env=env,capture_output=True,text=True)
+            return result,calls.read_text() if calls.exists() else ''
+    def test_source_build_and_label(self):
+        result,calls=self.run_source()
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertIn('org.qentrah.vantah=current',calls)
+        self.assertIn('127.0.0.1:6081',result.stdout)
+    def test_existing_owned_and_unrelated(self):
+        result,calls=self.run_source('owned');self.assertEqual(result.returncode,0,result.stderr)
+        self.assertIn('127.0.0.1:6099',result.stdout);self.assertNotIn('build',calls)
+        result,calls=self.run_source('other');self.assertNotEqual(result.returncode,0)
+        self.assertNotIn('start ',calls)
+    def test_bad_port(self):
+        result,calls=self.run_source(port='70000');self.assertNotEqual(result.returncode,0)
+        self.assertNotIn('build',calls)
 
 if __name__ == '__main__':
     unittest.main()

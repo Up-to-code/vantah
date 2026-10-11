@@ -8,6 +8,9 @@ if [ "${1:-}" = "--search" ]; then
   exit 0
 fi
 export DISPLAY="${DISPLAY:-:1}"
+if [ -f /tmp/vantah-session.env ] && pgrep -x kwin_x11 >/dev/null; then
+  . /tmp/vantah-session.env
+fi
 if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
   session_pid=$(pgrep -x xfce4-session | head -n 1)
   DBUS_SESSION_BUS_ADDRESS=$(tr '\000' '\n' < "/proc/$session_pid/environ" | sed -n 's/^DBUS_SESSION_BUS_ADDRESS=//p')

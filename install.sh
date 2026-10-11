@@ -1,23 +1,40 @@
 #!/bin/sh
-# Install into the existing sandbox without rebuilding or deleting it.
+# Upgrade the existing Alpine sandbox to KWin Glass without deleting its files.
 set -eu
 cd "$(dirname "$0")"
 container="${1:-alpine-gui}"
-docker exec -u 0 "$container" apk add --no-cache py3-gobject3 py3-cairo libwnck3 xprop tzdata picom
-docker exec "$container" mkdir -p /home/sandbox/.local/share/alpine-shell /home/sandbox/.config/autostart
-docker cp . "$container":/home/sandbox/.local/share/alpine-shell/
-docker cp alpine-shell.desktop "$container":/home/sandbox/.config/autostart/alpine-shell.desktop
-docker cp fix-vnc.py "$container":/tmp/alpine-shell-fix-vnc.py
-docker exec -u 0 "$container" python3 /tmp/alpine-shell-fix-vnc.py
-docker exec "$container" sh -c '
-  export DBUS_SESSION_BUS_ADDRESS=$(tr "\000" "\n" < "/proc/$(pgrep -x xfce4-session | head -n 1)/environ" | sed -n "s/^DBUS_SESSION_BUS_ADDRESS=//p")
-  xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>space" -n -t string -s "sh /home/sandbox/.local/share/alpine-shell/run-shell.sh --search"
-  if [ -f /tmp/alpine-shell-1000.pid ]; then
-    kill -TERM "$(cat /tmp/alpine-shell-1000.pid)"
-    for attempt in 1 2 3 4 5 6 7 8 9 10; do
-      [ ! -f /tmp/alpine-shell-1000.pid ] && break
-      sleep 0.2
-    done
-  fi
+revision=0ae94cf5e709a894a9f1f54544cb17deb7f77d58
+kwin_revision=f53992fd00bd446c478adda5d4cf8b588cb32b75
+docker exec -u 0 "$container" apk add --no-cache py3-gobject3 py3-cairo libwnck3 xprop tzdata \
+  xvfb x11vnc kwin breeze breeze-cursors mesa-dri-gallium mesa-gl qt6-qtsensors
+installed=$(docker exec "$container" cat /usr/share/doc/vantah-glass/REVISION 2>/dev/null || true)
+installed_kwin=$(docker exec "$container" cat /usr/share/doc/vantah-glass/KWIN_REVISION 2>/dev/null || true)
+if [ "$installed" != "$revision" ] || [ "$installed_kwin" != "$kwin_revision" ]; then
+  printf 'Building KWin and Glass. This requires several GB of free disk space.\n'
+  docker exec -u 0 "$container" mkdir -p /tmp/vantah-build
+  docker cp sandbox/build-glass.sh "$container":/tmp/vantah-build/
+  docker cp sandbox/patch-kwin-x11.py "$container":/tmp/vantah-build/
+  docker exec -u 0 "$container" sh /tmp/vantah-build/build-glass.sh
+fi
+docker exec -u 1000 "$container" mkdir -p /home/sandbox/.local/share/alpine-shell /home/sandbox/.config/autostart
+# Explicit archive ownership also handles host UID differences on macOS.
+if tar --version 2>/dev/null | sed -n '1p' | grep -q bsdtar; then
+  COPYFILE_DISABLE=1 tar --no-xattrs --no-acls --no-fflags --uid 1000 --gid 1000 --exclude .git -cf - . | docker cp -a - "$container":/home/sandbox/.local/share/alpine-shell/
+else
+  tar --owner=1000 --group=1000 --exclude .git -cf - . | docker cp -a - "$container":/home/sandbox/.local/share/alpine-shell/
+fi
+docker exec -u 1000 "$container" sh -c '
+  root=/home/sandbox/.local/share/alpine-shell
+  cp "$root/alpine-shell.desktop" /home/sandbox/.config/autostart/alpine-shell.desktop
+  cp "$root/kwinrc" /home/sandbox/.config/kwinrc
 '
-docker exec -d "$container" sh -c 'sh /home/sandbox/.local/share/alpine-shell/run-shell.sh > /tmp/alpine-shell.log 2>&1'
+docker cp fix-vnc.py "$container":/tmp/vantah-fix-vnc.py
+docker cp sandbox/start-desktop.sh "$container":/tmp/vantah-start-desktop
+docker exec -u 0 "$container" sh -c '
+  python3 /tmp/vantah-fix-vnc.py
+  rm -f /usr/local/bin/start-desktop
+  cp /tmp/vantah-start-desktop /usr/local/bin/start-desktop
+  chmod +x /usr/local/bin/start-desktop
+'
+docker restart "$container" >/dev/null
+printf 'vAntah now starts with KWin Glass. Reload its noVNC browser.\n'

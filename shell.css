@@ -47,21 +47,76 @@ window#shell-surface { background-color: transparent; }
 .running-dot { min-height: 9px; font-size: 13px; color: #d6dae7; }
 .active-dock-item .running-dot { color: #8fbdff; }
 .dock-separator { background: rgba(255, 255, 255, 0.27); margin: 8px 0 13px; }
-window#launcher-window { background: transparent; color: #f5f6fb; }
-.launcher-card { padding: 22px; background: linear-gradient(to bottom, rgba(43, 45, 65, 0.94), rgba(21, 23, 38, 0.9)); border: 1px solid rgba(255,255,255,0.28); border-radius: 18px; }
-.launcher-heading { font-size: 21px; font-weight: bold; }
-.launcher-card entry { padding: 12px; border-radius: 12px; background: rgba(7, 9, 20, 0.56); color: #f5f6fb; border: 1px solid #727d99; }
-.launcher-card list { background: transparent; }
-.launcher-card row { border-radius: 9px; margin: 2px 0; }
-.launcher-card row:selected { background: #244d8d; color: #fff; }
-.result-row { padding: 10px 12px; }
-.result-title { font-size: 13px; font-weight: bold; }
-.result-description { font-size: 11px; color: #c7cfdf; }
-.launcher-hint { font-size: 11px; color: #c7cfdf; }
-.empty-result { padding: 35px; color: #c7cfdf; }
-.menu-bar button:focus, .dock-button:focus, .launcher-card button:focus,
-.launcher-card entry:focus, .launcher-card row:focus {
-  outline: 2px solid #8fbdff;
+window#launcher-window, window#panel-window { background: transparent; color: #f5f6fb; }
+.launcher-search {
+  padding: 7px 12px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: linear-gradient(to bottom, rgba(14,16,24,0.74), rgba(21,24,40,0.54));
+}
+.launcher-search entry {
+  min-height: 38px;
+  padding: 0 8px;
+  font-size: 17px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #f5f6fb;
+  caret-color: #dbeaff;
+}
+.search-placeholder { color: #c6cddd; font-size: 17px; }
+.launcher-search entry image { color: #d3d9e5; }
+.launcher-close {
+  min-width: 36px; min-height: 36px; padding: 0;
+  border-radius: 18px; border: none; background: rgba(255,255,255,0.08);
+  box-shadow: none; color: #e7ebf5; font-size: 20px;
+}
+.launcher-close:hover { background: rgba(255,255,255,0.17); }
+.app-grid-card {
+  padding: 14px 16px 10px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: linear-gradient(to bottom, rgba(35,38,53,0.65), rgba(21,24,39,0.60));
+}
+.category-tab {
+  min-height: 26px; padding: 2px 9px; border-radius: 13px;
+  border: none; background: rgba(255,255,255,0.07); color: #c6cddc;
+  box-shadow: none; font-size: 11px;
+}
+.category-tab:hover { background: rgba(255,255,255,0.14); }
+.category-tab:checked { background: rgba(130,149,218,0.30); color: #fff; }
+.app-grid-card flowbox { background: transparent; }
+.app-tile {
+  min-width: 76px; min-height: 82px; padding: 6px;
+  border: 1px solid transparent; border-radius: 14px;
+  background: transparent; color: #f5f6fb;
+}
+.app-tile:hover { background: rgba(255,255,255,0.10); }
+.app-tile:selected { background: rgba(145,166,221,0.14); border-color: rgba(203,219,255,0.24); }
+.app-name { font-size: 11px; font-weight: 500; }
+.launcher-hint { font-size: 11px; color: #d3d9e5; padding-top: 2px; }
+.empty-result { padding: 18px; color: #d3d9e5; }
+.menu-card {
+  padding: 7px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: linear-gradient(to bottom, rgba(35,38,53,0.78), rgba(22,25,39,0.72));
+  color: #f5f6fb;
+}
+.menu-action, .menu-toggle {
+  min-height: 32px; padding: 6px 12px; border-radius: 9px;
+  border: none; background: transparent; color: #f5f6fb;
+  box-shadow: none; font-size: 12px;
+}
+.menu-action:hover, .menu-toggle:hover { background: rgba(146,166,220,0.24); }
+.menu-toggle check { margin-right: 10px; background: #3c465c; border: 1px solid #929eb7; }
+.menu-toggle check:checked { background: #416fae; color: #fff; }
+.menu-card separator { background: rgba(255,255,255,0.13); min-height: 1px; }
+.menu-card calendar { background: transparent; color: #f5f6fb; border: none; }
+.menu-bar button:focus, .dock-button:focus, .launcher-close:focus,
+.launcher-search entry:focus, .app-tile:focus, .category-tab:focus,
+.menu-action:focus, .menu-toggle:focus {
+  outline: 2px solid #aac8ff;
   outline-offset: -2px;
 }
 .light .menu-bar { background: linear-gradient(to bottom, rgba(255,255,255,0.84), rgba(226,229,245,0.76)); color: #20222b; }
@@ -70,9 +125,31 @@ window#launcher-window { background: transparent; color: #f5f6fb; }
 .light .dock { background: linear-gradient(to bottom, rgba(255,255,255,0.46), rgba(206,212,236,0.38)); }
 .light .running-dot { color: #373b4c; }
 .light .dock-separator { background: rgba(40,50,80,0.25); }
-window#launcher-window.light { color: #252735; }
-.light .launcher-card { background: rgba(243,246,255,0.94); }
-.light .launcher-card entry { background: rgba(255,255,255,0.8); color: #252735; border-color: #7a849e; }
-.light .launcher-card row:selected { background: #dce8ff; color: #18366f; }
-.light .result-description, .light .launcher-hint, .light .empty-result { color: #505769; }
+window#launcher-window.light, window#panel-window.light { color: #252735; }
+.light .launcher-search, .light .app-grid-card, .light .menu-card {
+  background: rgba(242,246,255,0.76); color: #252735;
+  border-color: rgba(255,255,255,0.7);
+}
+.light .launcher-search entry, .light .launcher-search entry image,
+.light .launcher-close, .light .app-tile, .light .menu-action, .light .menu-toggle,
+.light .menu-card calendar { color: #252735; }
+.light .launcher-close, .light .category-tab { background: rgba(40,50,80,0.08); color: #3c4354; }
+.light .category-tab:checked { background: rgba(69,98,160,0.20); color: #173663; }
+.light .app-tile:selected, .light .menu-action:hover { background: rgba(69,98,160,0.14); }
+.light .menu-toggle check { background: #e3e8f2; border-color: #64718c; }
+.light .menu-toggle check:checked { background: #315d9d; color: #fff; }
+.light .search-placeholder { color: #596172; }
+.light .launcher-hint, .light .empty-result { color: #505769; }
 .reduced-motion * { transition: none; }
+
+/* KWin Glass samples and refracts the actual composited desktop. Keep GTK's
+   material layer thin so the optical effect remains visible underneath. */
+.kwin .dock { background: rgba(17,21,33,0.16); }
+.kwin .menu-bar { background: rgba(17,21,33,0.32); }
+.kwin .launcher-search { background: rgba(12,16,25,0.30); }
+.kwin .app-grid-card, .kwin .menu-card { background: rgba(16,20,31,0.36); }
+.kwin.light .dock { background: rgba(242,246,255,0.18); }
+.kwin.light .menu-bar { background: rgba(242,246,255,0.46); }
+.kwin.light .launcher-search, .kwin.light .app-grid-card, .kwin.light .menu-card {
+  background: rgba(242,246,255,0.50);
+}

@@ -1,6 +1,6 @@
-<p align="center"><img src="assets/logo.svg" width="112" alt="Alpine Glass Shell logo"></p>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logo-light.svg"><img src="assets/logo.svg" width="112" alt="Qentrah logo"></picture></p>
 
-# Alpine Glass Shell
+# vAntah
 
 A native glass desktop shell for Alpine Linux: translucent desktop chrome,
 a live-blurred dock, application search, dark mode, and motion controls.
@@ -13,13 +13,33 @@ Application search in the themed sandbox:
 
 ![Application search](docs/screenshots/applications.jpg)
 
-## Try it locally
+Download the source, logo, wallpaper, and screenshots from the
+[public v0.1.0 release](https://github.com/Up-to-code/vantah/releases/tag/v0.1.0).
+
+## One-command installer
+
+Requires Docker with a running Linux engine, `curl`, `tar`, and `shasum` or
+`sha256sum`. On macOS use Docker Desktop or Colima; on Linux use Docker Engine.
+Windows users can run the command inside WSL with Docker integration.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Up-to-code/vantah/v0.1.0/try.sh | sh
+```
+
+The installer downloads the versioned release, checks its SHA-256 checksum,
+builds the image for your machine, and starts a localhost-only desktop. Open the
+URL it prints. Running it again restarts the same container. Set `VANTAH_PORT`,
+`VANTAH_CONTAINER`, or `VANTAH_INSTALL_DIR` to customize it. It requires no sudo and
+does not install Docker or change your host desktop. Stop it with
+`docker stop vantah-demo`. Your container files remain available.
+
+## Build from source
 
 Requires Docker with a running Linux engine. On macOS, Docker Desktop or Colima
 can provide that engine.
 
 ```sh
-git clone https://github.com/Up-to-code/alpine-glass-shell.git
+git clone https://github.com/Up-to-code/vantah.git
 cd alpine-glass-shell
 sh sandbox/run.sh
 ```
@@ -27,17 +47,18 @@ sh sandbox/run.sh
 Open <http://127.0.0.1:6081/vnc.html?autoconnect=true&resize=remote>.
 The demo runs without host mounts as a non-root user, drops Linux capabilities,
 and binds its browser port to localhost. It has no VNC password, so keep the
-port on localhost. The container is named `alpine-glass-demo`; stop and restart
-it with `docker stop alpine-glass-demo` and `docker start alpine-glass-demo`.
+port on localhost. The container is named `vantah-demo`; stop and restart
+it with `docker stop vantah-demo` and `docker start vantah-demo`.
 
 The source is baked into the image. Rebuild after editing it. `run.sh` refuses to
 replace an existing container; use a different name and port to keep its files:
-`sh sandbox/run.sh alpine-glass-demo-v2 6082`.
+`sh sandbox/run.sh vantah-demo-v2 6082`.
 
 The fresh demo uses Adwaita app and window themes. The application-search screenshot shows the
 existing sandbox with separately installed WhiteSur themes and icons. If those
 are already installed, the shell selects them; otherwise it uses Adwaita.
-The wallpaper, logo, and dock icons in this repository are original assets.
+The wallpaper and dock icons are original project assets. vAntah uses the
+Qentrah logo supplied by the project owner.
 
 ## Native implementation
 
@@ -53,7 +74,7 @@ and scale/fade animations. Xfwm remains the underlying window manager.
 - Click a dock app to open it or cycle through its windows. Dots show running apps.
 - Right-click a pinned app for a new window. Additional windows appear in the dock or its overflow menu.
 - Click the sun/moon to switch dark and light appearance. The appearance also applies to GTK apps and window frames.
-- Use the diamond menu to enable **Reduce Motion**, change wallpaper, or restore Xfce panels.
+- Use the Qentrah logo menu to enable **Reduce Motion**, change wallpaper, or restore Xfce panels.
 - Click the clock for a calendar. Time is shown in Africa/Cairo.
 
 Dark mode is the default. Preferences are saved in `~/.config/alpine-shell/settings.json`.
@@ -82,12 +103,13 @@ sh install.sh alpine-gui
 ```
 
 Optional WhiteSur themes and icons are not redistributed here and keep their
-upstream licenses. The shell code and original repository artwork are MIT licensed. This is an original Linux shell inspired by Apple
+upstream licenses. The shell code, wallpaper, and dock icons are MIT licensed. The Qentrah logo
+is project-owner branding, excluded from the artwork license. This is an original Linux shell inspired by Apple
 design, not Apple's iOS or macOS code and not an official 2027 Apple theme.
 
 ## Restore
 
-Choose **Restore Xfce Panels** in the diamond menu. To stop automatic startup,
+Choose **Restore Xfce Panels** in the Qentrah logo menu. To stop automatic startup,
 rename `~/.config/autostart/alpine-shell.desktop` to an extension other than `.desktop`.
 The shell does not delete your Xfce configuration or sandbox files.
 
@@ -104,9 +126,10 @@ was attempted, but the account's review credit limit prevented a result.
 
 ```sh
 python3 -m py_compile shell.py fix-vnc.py
-sh -n install.sh run-shell.sh sandbox/run.sh sandbox/start-desktop.sh
+python3 sandbox/test-installer.py
+sh -n try.sh install.sh run-shell.sh sandbox/run.sh sandbox/start-desktop.sh
 # Test the patched client exported from the running demo:
-docker cp alpine-glass-demo:/usr/share/novnc/core/input/keyboard.js /tmp/alpine-keyboard.js
+docker cp vantah-demo:/usr/share/novnc/core/input/keyboard.js /tmp/alpine-keyboard.js
 node sandbox/test-vnc-keyboard.cjs /tmp/alpine-keyboard.js
 ```
 

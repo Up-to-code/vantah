@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Alpine Shell: a native GTK desktop shell on the X11 window manager."""
+"""vAntah: a native GTK desktop shell on the X11 window manager."""
 import datetime
 import fcntl
 import json
@@ -24,7 +24,7 @@ LOCK = open(f'/tmp/alpine-shell-{os.getuid()}.lock', 'w')
 try:
     fcntl.flock(LOCK, fcntl.LOCK_EX | fcntl.LOCK_NB)
 except BlockingIOError:
-    raise SystemExit('Alpine Shell is already running.')
+    raise SystemExit('vAntah is already running.')
 PID_FILE.write_text(str(os.getpid()))
 
 
@@ -72,8 +72,8 @@ class Shell:
         self.compositor = None
         self.start_compositor()
         self.extra_signature = None
-        self.bar = self.surface('Alpine Shell — Menu Bar')
-        self.dock = self.surface('Alpine Shell — Dock')
+        self.bar = self.surface('vAntah — Menu Bar')
+        self.dock = self.surface('vAntah — Dock')
         self.build_bar()
         self.build_dock()
         self.dock.connect('size-allocate', self.shape_dock)
@@ -141,7 +141,7 @@ class Shell:
         self.bar.add(box)
         menu = Gtk.Menu()
         for text, callback in [
-            ('About Alpine Shell', self.about),
+            ('About vAntah', self.about),
             ('Applications…', self.toggle_launcher),
             ('Open Home', lambda: self.launch_id('thunar.desktop')),
             ('System Settings…', lambda: self.launch_id('xfce-settings-manager.desktop')),
@@ -162,10 +162,12 @@ class Shell:
             self.mode_items[key] = item
             menu.append(item)
         menu.show_all()
-        brand = Gtk.MenuButton(label='◈')
+        brand = Gtk.MenuButton()
+        self.brand_image = Gtk.Image()
+        brand.add(self.brand_image)
         brand.set_popup(menu)
-        brand.set_tooltip_text('Alpine Shell menu')
-        brand.get_accessible().set_name('Alpine Shell menu')
+        brand.set_tooltip_text('vAntah menu')
+        brand.get_accessible().set_name('vAntah menu')
         style(brand, 'brand-button')
         box.pack_start(brand, False, False, 0)
         self.active_label = style(Gtk.Label(label='Desktop'), 'active-app')
@@ -373,7 +375,7 @@ class Shell:
         return False
 
     def build_launcher(self):
-        win = Gtk.Window(title='Alpine Shell — Applications')
+        win = Gtk.Window(title='vAntah — Applications')
         win.set_name('launcher-window')
         win.set_decorated(False)
         win.set_app_paintable(True)
@@ -424,6 +426,8 @@ class Shell:
             if win:
                 self.style_appearance(win)
         dark = self.preferences['dark']
+        logo = ROOT / 'assets' / ('logo-light.svg' if dark else 'logo.svg')
+        self.brand_image.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_scale(str(logo), 22, 22, True))
         theme = 'WhiteSur-Dark' if dark else 'WhiteSur-Light'
         theme_roots = (Path.home() / '.themes', Path.home() / '.local/share/themes', Path('/usr/share/themes'))
         has_whitesur = any((root / theme / 'gtk-3.0').is_dir() for root in theme_roots)
@@ -586,10 +590,10 @@ class Shell:
         menu.popup_at_pointer(None)
 
     def session_menu(self):
-        self.message('Alpine Linux', 'Alpine Shell · native GTK desktop\nUser: sandbox\nSuper+Space opens application search.\nRight-click a dock app for window actions.')
+        self.message('Alpine Linux', 'vAntah · native GTK desktop\nUser: sandbox\nSuper+Space opens application search.\nRight-click a dock app for window actions.')
 
     def about(self):
-        self.message('Alpine Shell', 'A custom native desktop shell for Alpine Linux.\nBuilt with GTK 3, PyGObject, and libwnck.\nSource: ~/.local/share/alpine-shell\nShell code: MIT license\nWhiteSur artwork remains under its upstream licenses.')
+        self.message('vAntah', 'A custom native desktop shell for Alpine Linux.\nBuilt with GTK 3, PyGObject, and libwnck.\nSource: ~/.local/share/alpine-shell\nShell code: MIT license\nWhiteSur artwork remains under its upstream licenses.')
 
     def message(self, title, text):
         dialog = Gtk.MessageDialog(message_type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.CLOSE, text=title)

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Alpine Shell
+Name=vAntah
 Comment=Native glass desktop shell
 Exec=sh /home/sandbox/.local/share/alpine-shell/run-shell.sh
 OnlyShowIn=XFCE;

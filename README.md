@@ -5,7 +5,7 @@
 A native glass desktop shell for Alpine Linux: translucent desktop chrome,
 a refractive dock, application search, dark mode, and motion controls.
 The current source uses KWin X11 and the real KWin Glass compositor effect.
-The [public 0.2 preview release](https://github.com/Up-to-code/vantah/releases/tag/v0.2.0-preview) includes the updated source, logo, screenshots and desktop video.
+The [public 0.2.1 preview release](https://github.com/Up-to-code/vantah/releases/tag/v0.2.1-preview) includes the updated source, logo, screenshots and desktop video.
 
 ![Native Settings and dock](docs/screenshots/settings-en.jpg)
 
@@ -164,6 +164,14 @@ KWin and `glass_x11` loaded. [Appearance checks](docs/appearance-testing.md) rec
 the tested controls and limitations. The revised multistage Docker image has not yet
 been validated from a clean build. The earlier v0.1.1 image and installer were
 built and booted, and the patched noVNC keyboard regression passed.
+
+## Original desktop video
+
+[![Watch the original desktop journey](docs/social/vantah-original-poster.jpg)](https://github.com/Up-to-code/vantah/releases/download/v0.2.1-preview/vantah-original-15s.mp4)
+
+The complete 140-second desktop recording sped up to 15 seconds, with original music. No captions, stickers, extra framing or background blur. [Full recording](https://github.com/Up-to-code/vantah/releases/download/v0.2.1-preview/vantah-system-session.mp4) · [Silent copy for choosing your own music](https://github.com/Up-to-code/vantah/releases/download/v0.2.1-preview/vantah-original-15s-silent.mp4).
+
+Rebuild with `python3 scripts/build-release-video.py` after generating the music with the system-tour script. Requires FFmpeg and Python 3.
 
 ## TikTok system story
 

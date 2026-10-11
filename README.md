@@ -5,7 +5,11 @@
 A native glass desktop shell for Alpine Linux: translucent desktop chrome,
 a live-blurred dock, application search, dark mode, and motion controls.
 
-![Dark desktop](docs/screenshots/desktop-dark.jpg)
+Fresh Docker demo:
+
+![Fresh dark desktop](docs/screenshots/fresh-demo.jpg)
+
+Application search in the themed sandbox:
 
 ![Application search](docs/screenshots/applications.jpg)
 
@@ -30,7 +34,7 @@ The source is baked into the image. Rebuild after editing it. `run.sh` refuses t
 replace an existing container; use a different name and port to keep its files:
 `sh sandbox/run.sh alpine-glass-demo-v2 6082`.
 
-The fresh demo uses Adwaita app and window themes. The screenshots show the
+The fresh demo uses Adwaita app and window themes. The application-search screenshot shows the
 existing sandbox with separately installed WhiteSur themes and icons. If those
 are already installed, the shell selects them; otherwise it uses Adwaita.
 The wallpaper, logo, and dock icons in this repository are original assets.
@@ -108,3 +112,6 @@ node sandbox/test-vnc-keyboard.cjs /tmp/alpine-keyboard.js
 
 The keyboard regression simulates a swallowed Mac Command release and checks
 that it is released before the next `e` key, without sending Linux Alt.
+
+The Docker image was built and booted from this source; the native shell and
+Picom started successfully, and the patched noVNC keyboard regression passed.

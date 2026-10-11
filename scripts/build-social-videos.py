@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Render real desktop footage into bilingual portrait videos with original music.
-Requires: ffmpeg, Pillow, arabic-reshaper, python-bidi; local system fonts.
+"""Build clean bilingual portrait promos from the real white/blue desktop.
+Requires ffmpeg, Pillow, arabic-reshaper and python-bidi. Fonts remain local.
 """
 from pathlib import Path
 import argparse, math, subprocess, tempfile, wave
@@ -11,96 +11,102 @@ from bidi.algorithm import get_display
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs/social'
-CUES = {
-'en': [('Make Linux feel different', 'Real glass. Your own desktop.'),
-       ('Open. Edit. Save.', 'Native Files and a real text editor.'),
-       ('Trash that actually works', 'Move a file to Trash, then restore it.'),
-       ('English or العربية', 'Switch languages with mirrored Arabic layouts.'),
-       ('Search. Launch. Create.', 'A real Alpine Linux desktop. Try vAntah.')],
-'ar': [('سطح مكتب لينكس مختلف', 'زجاج حقيقي. وسطح مكتب يناسبك.'),
-       ('افتح. عدّل. احفظ.', 'تصفّح الملفات وحرّر مستنداتك فعليًا.'),
-       ('سلة مهملات تعمل فعليًا', 'انقل ملفًا إلى السلة ثم استعده.'),
-       ('العربية أو الإنجليزية', 'بدّل اللغة مع واجهة عربية من اليمين لليسار.'),
-       ('ابحث. افتح. أنشئ.', 'سطح مكتب ألباين لينكس حقيقي. جرّب vAntah.')]
-}
+DURATION = 15
+SHOT_DURATION = 5.3
+TRANSITION = .45
+# Start, crop width/height/x/y, output width/height, top placement.
+# First shot starts inside the real Appearance setup, followed by glass and dock.
+SHOTS = [(0, (880,600,216,48), (1040,710), 540),
+         (30, (230,570,390,74), (460,1140), 250),
+         (60, (600,170,340,598), (1040,294), 740)]
+CAPTIONS = {'en': ['Settings', 'Glass', 'Dock'],
+            'ar': ['الإعدادات', 'الزجاج', 'الشريط']}
 
 def run(*args):
     subprocess.run(args, check=True)
 
 def music(path):
-    """Original A-minor ambient loop; no samples or third-party composition."""
+    """Smooth original ambient chords, with continuous phase and soft envelopes.
+    No arpeggio, percussion, samples, hard note changes, or external recording.
+    """
     rate = 44100
     samples = array('h')
-    notes = [220, 261.6256, 329.6276, 391.9954, 293.6648, 349.2282, 440, 329.6276]
-    for i in range(rate * 15):
-        t = i / rate
-        fade = min(1, t / .6, (15-t) / 1.2)
-        step = int(t / .46875)
-        age = t % .46875
-        n = notes[step % len(notes)]
-        chime = .14 * math.exp(-age * 9) * (math.sin(2*math.pi*n*2*t) + .25*math.sin(2*math.pi*n*4*t))
-        pad = .07 * sum(math.sin(2*math.pi*f*t) for f in [110, 130.8128, 164.8138]) / 3
-        beat = t % .9375
-        kick = .16 * math.exp(-beat * 22) * math.sin(2*math.pi*(52*beat + 2.8*(1-math.exp(-beat*20))))
-        value = int(32767 * fade * (chime + pad + kick))
-        samples.extend([value, value])
-    with wave.open(str(path), 'wb') as w:
-        w.setparams((2, 2, rate, 0, 'NONE', 'not compressed'))
+    chords = [(0, [130.8128,164.8138,195.9977,246.9417]),
+              (5, [146.8324,174.6141,220,261.6256]),
+              (10,[130.8128,164.8138,195.9977,261.6256])]
+    for i in range(rate*DURATION):
+        t = i/rate
+        channels = []
+        for channel in range(2):
+            sound = 0
+            for start, notes in chords:
+                age = t-start
+                if 0 <= age < 7:
+                    envelope = math.sin(math.pi*age/7)**2
+                    for n,f in enumerate(notes):
+                        # Static stereo phase offset; every chord fades from zero.
+                        phase = channel*.19 + n*.27
+                        sound += .070*envelope*(math.sin(2*math.pi*f*t+phase)+.12*math.sin(2*math.pi*f*2*t+phase))
+            fade = min(1, t/1.2, (DURATION-t)/1.6)
+            channels.append(int(32767*sound*fade))
+        samples.extend(channels)
+    with wave.open(str(path),'wb') as w:
+        w.setparams((2,2,rate,0,'NONE','not compressed'))
         w.writeframes(samples.tobytes())
 
-def clock(sec, srt=True):
-    return f'00:00:{sec:02d}' + (',000' if srt else '.000')
+def stamp(seconds, srt=True):
+    whole = int(seconds)
+    ms = round((seconds-whole)*1000)
+    return f'00:00:{whole:02d}' + (',' if srt else '.') + f'{ms:03d}'
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--font', default='/System/Library/Fonts/Helvetica.ttc')
-    parser.add_argument('--arabic-font', default='/System/Library/Fonts/SFArabic.ttf')
+    parser.add_argument('--font',default='/System/Library/Fonts/Helvetica.ttc')
+    parser.add_argument('--arabic-font',default='/System/Library/Fonts/SFArabic.ttf')
     args = parser.parse_args()
     OUT.mkdir(exist_ok=True)
-    music(OUT / 'vantah-original-music.wav')
-    def text(draw, label, y, size, color, arabic=False):
-        rendered = get_display(arabic_reshaper.reshape(label)) if arabic else label
-        fontpath = args.arabic_font if arabic or any('\u0600' <= c <= '\u06ff' for c in label) else args.font
-        while True:
-            font = ImageFont.truetype(fontpath, size)
-            bounds = draw.textbbox((0,0), rendered, font=font)
-            if bounds[2]-bounds[0] <= 900 or size <= 22: break
-            size -= 1
-        draw.text((540, y), rendered, font=font, fill=color, anchor='mt')
-    with tempfile.TemporaryDirectory(prefix='vantah-social-') as scratch:
-        scratch = Path(scratch)
-        for lang, cues in CUES.items():
-            entries = []
-            for idx, (headline, caption) in enumerate(cues):
-                img = Image.new('RGB', (1080,1920))
-                pix = img.load()
-                for y in range(1920):
-                    for x in range(1080):
-                        glow = math.exp(-(((x-900)/700)**2 + ((y-600)/750)**2))
-                        pix[x,y] = (int(10+29*glow), int(13+23*glow), int(25+65*glow))
-                d = ImageDraw.Draw(img)
-                text(d, 'vAntah', 195, 110, '#ffffff')
-                text(d, 'YOUR LINUX. REIMAGINED.' if lang=='en' else 'لينكس بطريقتك', 335, 32, '#b7beee', lang=='ar')
-                d.rounded_rectangle((32, 492,1048,1116), radius=26, fill='#161d34', outline='#7580ac', width=2)
-                text(d, headline, 1215, 58, '#ffffff', lang=='ar')
-                text(d, caption, 1310, 34, '#d4d8ec', lang=='ar')
-                for j in range(5):
-                    x = 380+j*66
-                    d.rounded_rectangle((x,1435,x+48,1440),radius=2,fill='#a8b5ff' if j==idx else '#38415d')
-                text(d, 'OPEN SOURCE / REAL DESKTOP' if lang=='en' else 'مفتوح المصدر / سطح مكتب حقيقي', 1550, 27, '#b7beee', lang=='ar')
-                text(d, 'github.com/Up-to-code/vantah', 1610, 28, '#ffffff')
-                frame = scratch / f'{lang}-{idx}.png'
-                img.save(frame)
-                entries.append(f"file '{frame}'\nduration 3\n")
-            entries.append(f"file '{frame}'\n")
-            timeline = scratch / f'{lang}.txt'
-            timeline.write_text(''.join(entries))
-            (OUT / f'vantah-tiktok-{lang}.srt').write_text('\n\n'.join(f'{i+1}\n{clock(i*3)} --> {clock((i+1)*3)}\n{h}\n{c}' for i,(h,c) in enumerate(cues))+'\n')
-            (OUT / f'vantah-tiktok-{lang}.vtt').write_text('WEBVTT\n\n'+'\n\n'.join(f'{clock(i*3,False)} --> {clock((i+1)*3,False)}\n{h}\n{c}' for i,(h,c) in enumerate(cues))+'\n')
-            run('ffmpeg','-hide_banner','-loglevel','warning','-y','-f','concat','-safe','0','-i',str(timeline),
-                '-i',str(ROOT/'docs/vantah-tour.mp4'),'-i',str(OUT/'vantah-original-music.wav'),
-                '-filter_complex','[0:v]fps=30,format=yuv420p[bg];[1:v]scale=1000:600[demo];[bg][demo]overlay=40:504:shortest=1[v]',
-                '-map','[v]','-map','2:a','-t','15','-c:v','libx264','-preset','medium','-crf','20',
-                '-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-movflags','+faststart',str(OUT/f'vantah-tiktok-{lang}.mp4'))
-if __name__ == '__main__':
-    main()
+    source = OUT/'vantah-blue-session.mp4'
+    if not source.exists():
+        raise SystemExit('Missing real desktop source: docs/social/vantah-blue-session.mp4')
+    music(OUT/'vantah-original-music.wav')
+    with tempfile.TemporaryDirectory(prefix='vantah-promo-') as temp:
+        temp = Path(temp)
+        for lang, captions in CAPTIONS.items():
+            clips=[]
+            for i, (start,crop,size,top) in enumerate(SHOTS):
+                card=Image.new('RGB',(1080,1920),'#fafcff')
+                draw=ImageDraw.Draw(card)
+                label=captions[i]
+                if lang=='ar': label=get_display(arabic_reshaper.reshape(label))
+                font=ImageFont.truetype(args.arabic_font if lang=='ar' else args.font, 96)
+                draw.text((540,1470),label,font=font,fill='#172b46',anchor='mt')
+                background=temp/f'{lang}-{i}.png'; card.save(background)
+                cw,ch,cx,cy=crop; ow,oh=size
+                # Cosine easing avoids a sudden camera start/stop. Overscan is
+                # derived from the native pixels, with all important controls retained.
+                ease='(0.5-0.5*cos(PI*on/158))'
+                zoom=f'1+0.04*{ease}'
+                vf=(f'[0:v]crop={cw}:{ch}:{cx}:{cy},'
+                    f'zoompan=z=\'{zoom}\':x=\'iw/2-iw/zoom/2\':y=\'ih/2-ih/zoom/2\':'
+                    f'd=1:s={ow}x{oh}:fps=30,setsar=1[detail];'
+                    f'[1:v]fps=30,format=yuv420p[paper];'
+                    f'[paper][detail]overlay={(1080-ow)//2}:{top}:shortest=1,format=yuv420p[v]')
+                clip=temp/f'{lang}-{i}.mp4'; clips.append(clip)
+                run('ffmpeg','-hide_banner','-loglevel','warning','-y','-ss',str(start),'-t',str(SHOT_DURATION),'-i',str(source),
+                    '-loop','1','-i',str(background),'-filter_complex',vf,'-map','[v]',
+                    '-t',str(SHOT_DURATION),'-an','-c:v','libx264','-preset','fast','-crf','19',str(clip))
+            run('ffmpeg','-hide_banner','-loglevel','warning','-y',
+                '-i',str(clips[0]),'-i',str(clips[1]),'-i',str(clips[2]),'-i',str(OUT/'vantah-original-music.wav'),
+                '-filter_complex','[0:v][1:v]xfade=transition=fade:duration=0.45:offset=4.85[first];'
+                '[first][2:v]xfade=transition=fade:duration=0.45:offset=9.7,format=yuv420p[v]',
+                '-map','[v]','-map','3:a','-t','15','-c:v','libx264','-preset','medium','-crf','19',
+                '-c:a','aac','-b:a','192k','-movflags','+faststart',str(OUT/f'vantah-tiktok-{lang}.mp4'))
+            ranges=[(0,4.85),(5.3,9.7),(10.15,15)]
+            for ext in ['srt','vtt']:
+                srt=ext=='srt'
+                rows=[(f'{i+1}\n' if srt else '')+f'{stamp(a,srt)} --> {stamp(b,srt)}\n{label}'
+                      for i,((a,b),label) in enumerate(zip(ranges,captions))]
+                (OUT/f'vantah-tiktok-{lang}.{ext}').write_text(('' if srt else 'WEBVTT\n\n')+'\n\n'.join(rows)+'\n')
+            run('ffmpeg','-hide_banner','-loglevel','error','-y','-ss','1','-i',str(OUT/f'vantah-tiktok-{lang}.mp4'),
+                '-frames:v','1',str(OUT/f'vantah-tiktok-{lang}-poster.jpg'))
+if __name__=='__main__': main()

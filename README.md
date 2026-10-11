@@ -167,4 +167,4 @@ built and booted, and the patched noVNC keyboard regression passed.
 
 ## TikTok videos
 
-Download the [English](docs/social/vantah-tiktok-en.mp4) or [Arabic](docs/social/vantah-tiktok-ar.mp4) 15-second portrait video, with captions and original music. [Subtitle files, soundtrack and rebuilding instructions](docs/social/README.md).
+Watch the clean white/blue [English](docs/social/vantah-tiktok-en.mp4) or [Arabic](docs/social/vantah-tiktok-ar.mp4) 15-second promo: Settings first, eased close-ups of glass and the dock, three large captions, and a soft original soundtrack. [Subtitle files, soundtrack and rebuilding instructions](docs/social/README.md).

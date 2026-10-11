@@ -5,7 +5,7 @@ window#shell-surface { background-color: transparent; }
   color: #f5f6fb;
   border-bottom: 1px solid rgba(255, 255, 255, 0.16);
   padding: 0 12px;
-  font-family: "DejaVu Sans", sans-serif;
+  font-family: "Inter", "DejaVu Sans", sans-serif;
   font-size: 12px;
 }
 .menu-bar button {
@@ -146,10 +146,10 @@ window#launcher-window.light, window#panel-window.light { color: #252735; }
    material layer thin so the optical effect remains visible underneath. */
 .kwin .dock { background: rgba(17,21,33,0.16); }
 .kwin .menu-bar { background: rgba(17,21,33,0.32); }
-.kwin .launcher-search { background: rgba(12,16,25,0.30); }
-.kwin .app-grid-card, .kwin .menu-card { background: rgba(16,20,31,0.36); }
+.kwin .launcher-search { background: rgba(20,21,25,0.62); }
+.kwin .app-grid-card, .kwin .menu-card { background: rgba(24,25,29,0.60); }
 .kwin.light .dock { background: rgba(242,246,255,0.18); }
 .kwin.light .menu-bar { background: rgba(242,246,255,0.46); }
 .kwin.light .launcher-search, .kwin.light .app-grid-card, .kwin.light .menu-card {
-  background: rgba(242,246,255,0.50);
+  background: rgba(248,248,250,0.74);
 }

@@ -7,6 +7,8 @@ revision=0ae94cf5e709a894a9f1f54544cb17deb7f77d58
 kwin_revision=f53992fd00bd446c478adda5d4cf8b588cb32b75
 docker exec -u 0 "$container" apk add --no-cache py3-gobject3 py3-cairo libwnck3 xprop tzdata \
   xvfb x11vnc kwin breeze breeze-cursors mesa-dri-gallium mesa-gl qt6-qtsensors
+docker cp sandbox/install-appearance.sh "$container":/tmp/vantah-install-appearance.sh
+docker exec -u 0 "$container" sh /tmp/vantah-install-appearance.sh
 installed=$(docker exec "$container" cat /usr/share/doc/vantah-glass/REVISION 2>/dev/null || true)
 installed_kwin=$(docker exec "$container" cat /usr/share/doc/vantah-glass/KWIN_REVISION 2>/dev/null || true)
 if [ "$installed" != "$revision" ] || [ "$installed_kwin" != "$kwin_revision" ]; then

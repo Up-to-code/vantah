@@ -7,7 +7,7 @@ a refractive dock, application search, dark mode, and motion controls.
 The current source uses KWin X11 and the real KWin Glass compositor effect.
 The published v0.1.1 installer below still provides the earlier Picom demo.
 
-Running KWin Glass desktop:
+Running KWin Glass desktop with MacTahoe icons:
 
 ![KWin Glass launcher and dock](docs/screenshots/kwin-glass.jpg)
 
@@ -62,11 +62,15 @@ The source is baked into the image. Rebuild after editing it. `run.sh` refuses t
 replace an existing container; use a different name and port to keep its files:
 `sh sandbox/run.sh vantah-demo-v2 6082`.
 
-The fresh demo uses Adwaita app and window themes. The application-search screenshot shows the
-existing sandbox with separately installed WhiteSur themes and icons. If those
-are already installed, the shell selects them; otherwise it uses Adwaita.
-The wallpaper and dock icons are original project assets. vAntah uses the
-Qentrah logo supplied by the project owner.
+The current source installs pinned [MacTahoe icons](https://github.com/vinceliuice/MacTahoe-icon-theme),
+[GTK themes](https://github.com/vinceliuice/MacTahoe-gtk-theme), cursors, and
+[KWin Aurorae decorations](https://github.com/vinceliuice/MacTahoe-kde).
+These are open-source Linux themes inspired by macOS Tahoe, not extracted Apple
+system assets or an exact macOS 27 theme. Inter is the desktop font.
+[Apple 27 and Siri reference catalog](docs/apple-design-references.md) records
+which official screenshots informed the work and what still differs.
+The wallpaper is an original project asset. vAntah uses the Qentrah logo supplied
+by the project owner. The earlier v0.1.1 demo screenshots retain its older appearance.
 
 ## Native implementation
 
@@ -95,10 +99,10 @@ The shell starts automatically with the Alpine desktop.
 
 `shell.py` is the native shell, `shell.css` defines its UI, and `kwinrc` configures
 the real Glass effect. The Picom files remain for the earlier session backend.
-The compact dark-tile dock icons are editable SVGs in `icons/`; `icons/generate.py`
-regenerates them. Dock hover zoom uses cached images and native animation timers.
+MacTahoe supplies the active dock, launcher, application, and system icons.
+The original SVGs in `icons/` remain as a fallback when MacTahoe is unavailable. Dock hover zoom uses cached images and native animation timers.
 Dock symbols render at 48 pixels with a 54-pixel hover size, inside 56-pixel
-click targets. The dark tiles use near-full-frame artwork with tighter gaps.
+click targets. Themed artwork keeps its upstream shape and color rather than adding a fixed black tile.
 The source installed in Alpine is `~/.local/share/alpine-shell`.
 
 `fix-vnc.py` patches the sandbox's noVNC client so Mac Command stays Linux
@@ -116,8 +120,11 @@ From this directory on the Mac:
 sh install.sh alpine-gui
 ```
 
-Optional WhiteSur themes and icons are not redistributed here and keep their
-upstream licenses. The shell code, wallpaper, and dock icons are MIT licensed. The Qentrah logo
+`sandbox/install-appearance.sh` downloads pinned theme sources and preserves their
+licenses in `/usr/share/doc/vantah-appearance/`: icons GPL-3.0, GTK MIT, and
+KDE decorations LGPL-3.0. These remain separate from the shell's license.
+The installer disables the unrelated GNOME theme switcher and uses upstream
+silent mode to work in headless Alpine builds. The shell code, wallpaper, and dock icons are MIT licensed. The Qentrah logo
 is project-owner branding, excluded from the artwork license. This is an original Linux shell inspired by Apple
 design, not Apple's iOS or macOS code and not an official 2027 Apple theme.
 
@@ -154,7 +161,8 @@ node sandbox/test-vnc-sizing.cjs /tmp/vantah-vnc-ui.js
 The keyboard regression simulates a swallowed Mac Command release and checks
 that it is released before the next `e` key, without sending Linux Alt.
 
-The existing Alpine sandbox was upgraded, booted, and visually checked with
-KWin and `glass_x11` loaded. The revised multistage Docker image has not yet
+The existing Alpine sandbox was upgraded with MacTahoe, booted, and checked with
+KWin and `glass_x11` loaded. [Appearance checks](docs/appearance-testing.md) record
+the tested controls and limitations. The revised multistage Docker image has not yet
 been validated from a clean build. The earlier v0.1.1 image and installer were
 built and booted, and the patched noVNC keyboard regression passed.

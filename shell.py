@@ -72,7 +72,7 @@ class Shell:
         self.pins = [
             ('thunar.desktop', 'Files', 'system-file-manager', ('thunar',)),
             ('xfce4-terminal.desktop', 'Terminal', 'utilities-terminal', ('xfce4-terminal',)),
-            ('org.xfce.mousepad.desktop', 'Text Editor', 'accessories-text-editor', ('mousepad',)),
+            ('org.xfce.mousepad.desktop', 'Text Editor', 'accessories-text-editor', ('mousepad', 'org.xfce.mousepad')),
             ('xfce-settings-manager.desktop', 'Settings', 'preferences-system', ('xfce4-settings-manager',)),
         ]
         self.pin_widgets = []
@@ -306,11 +306,26 @@ class Shell:
         style(search, 'search-button')
         box.pack_end(search, False, False, 0)
 
+    def has_tahoe_icons(self):
+        return any((root / 'MacTahoe').is_dir() for root in
+                   (Path.home() / '.local/share/icons', Path('/usr/share/icons')))
+
     def icon(self, app_id, fallback, size):
+        if self.has_tahoe_icons():
+            themed = {'thunar.desktop': 'system-file-manager',
+                      'xfce4-terminal.desktop': 'utilities-terminal',
+                      'org.xfce.mousepad.desktop': 'accessories-text-editor',
+                      'xfce-settings-manager.desktop': 'preferences-system',
+                      'xfce4-appfinder.desktop': 'view-app-grid'}
+            name = themed.get(app_id, 'view-app-grid' if fallback == 'view-app-grid-symbolic' else None)
+            if name:
+                image = Gtk.Image.new_from_icon_name(name, Gtk.IconSize.DIALOG)
+                image.set_pixel_size(size)
+                return image
         custom = {'thunar.desktop': 'files', 'xfce4-terminal.desktop': 'terminal',
                   'org.xfce.mousepad.desktop': 'editor', 'xfce-settings-manager.desktop': 'settings'}
         name = custom.get(app_id, 'applications' if fallback == 'view-app-grid-symbolic' else None)
-        if name and (ROOT / 'icons' / f'{name}.svg').exists():
+        if not self.has_tahoe_icons() and name and (ROOT / 'icons' / f'{name}.svg').exists():
             return Gtk.Image.new_from_pixbuf(self.custom_pixbuf(name, size))
         app = Gio.DesktopAppInfo.new(app_id) if app_id else None
         if app and app.get_icon():
@@ -339,7 +354,12 @@ class Shell:
         obj.set_tooltip_text(name)
         obj.get_accessible().set_name(name)
         obj.connect('clicked', lambda _: action())
-        if window and window.get_icon():
+        if window and self.has_tahoe_icons():
+            icon_name = (window.get_class_group_name() or 'application-x-executable').casefold()
+            if not Gtk.IconTheme.get_default().has_icon(icon_name):
+                icon_name = 'application-x-executable'
+            image = self.icon(None, icon_name, 44)
+        elif window and window.get_icon():
             pixbuf = window.get_icon().scale_simple(44, 44, 2)
             image = Gtk.Image.new_from_pixbuf(pixbuf)
         else:
@@ -432,7 +452,7 @@ class Shell:
         active = self.screen.get_active_window()
         if active and not active.is_skip_tasklist():
             name = active.get_class_group_name() or 'Desktop'
-            friendly = {'thunar': 'Files', 'xfce4-terminal': 'Terminal', 'mousepad': 'Text Editor',
+            friendly = {'thunar': 'Files', 'xfce4-terminal': 'Terminal', 'mousepad': 'Text Editor', 'org.xfce.mousepad': 'Text Editor',
                         'xfce4-settings-manager': 'Settings'}
             self.active_label.set_text(friendly.get(name.casefold(), name))
         elif not active or active.get_window_type() == Wnck.WindowType.DESKTOP:
@@ -598,19 +618,36 @@ class Shell:
         dark = self.preferences['dark']
         logo = ROOT / 'assets' / ('logo-light.svg' if dark else 'logo.svg')
         self.brand_image.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_scale(str(logo), 22, 22, True))
-        theme = 'WhiteSur-Dark' if dark else 'WhiteSur-Light'
+        theme = 'MacTahoe-Dark' if dark else 'MacTahoe-Light'
         theme_roots = (Path.home() / '.themes', Path.home() / '.local/share/themes', Path('/usr/share/themes'))
-        has_whitesur = any((root / theme / 'gtk-3.0').is_dir() for root in theme_roots)
-        icon = 'WhiteSur-dark' if dark else 'WhiteSur-light'
+        has_theme = any((root / theme / 'gtk-3.0').is_dir() for root in theme_roots)
+        if not has_theme:
+            theme = 'WhiteSur-Dark' if dark else 'WhiteSur-Light'
+            has_theme = any((root / theme / 'gtk-3.0').is_dir() for root in theme_roots)
+        icon = ('MacTahoe-dark' if dark else 'MacTahoe-light') if self.has_tahoe_icons() else ('WhiteSur-dark' if dark else 'WhiteSur-light')
         icon_roots = (Path.home() / '.icons', Path.home() / '.local/share/icons', Path('/usr/share/icons'))
         has_icons = any((root / icon).is_dir() for root in icon_roots)
         has_frames = any((root / theme / 'xfwm4').is_dir() for root in theme_roots)
         for channel, prop, value in [
-            ('xsettings', '/Net/ThemeName', theme if has_whitesur else ('Adwaita-dark' if dark else 'Adwaita')),
+            ('xsettings', '/Net/ThemeName', theme if has_theme else ('Adwaita-dark' if dark else 'Adwaita')),
             ('xsettings', '/Net/IconThemeName', icon if has_icons else 'Adwaita'),
             ('xfwm4', '/general/theme', theme if has_frames else 'Default'),
         ]:
             subprocess.run(['xfconf-query', '-c', channel, '-p', prop, '-s', value], check=False)
+        cursor = 'MacTahoe-dark-cursors' if dark else 'MacTahoe-cursors'
+        if Path('/usr/share/icons', cursor).is_dir():
+            subprocess.run(['xfconf-query', '-c', 'xsettings', '-p', '/Gtk/CursorThemeName',
+                            '-n', '-t', 'string', '-s', cursor], check=False)
+        subprocess.run(['xfconf-query', '-c', 'xsettings', '-p', '/Gtk/FontName',
+                        '-n', '-t', 'string', '-s', 'Inter 10'], check=False)
+        Gtk.Settings.get_default().set_property('gtk-icon-theme-name', icon if has_icons else 'Adwaita')
+        if os.environ.get('VANTAH_COMPOSITOR') == 'kwin' and Path('/usr/share/aurorae/themes/MacTahoe-Dark').is_dir():
+            decoration = 'MacTahoe-Dark' if dark else 'MacTahoe-Light'
+            for key, value in [('library', 'org.kde.kwin.aurorae'), ('theme', '__aurorae__svg__' + decoration)]:
+                subprocess.run(['kwriteconfig6', '--file', 'kwinrc', '--group', 'org.kde.kdecoration2',
+                                '--key', key, value], check=False)
+            subprocess.run(['gdbus', 'call', '--session', '--dest', 'org.kde.KWin', '--object-path', '/KWin',
+                            '--method', 'org.kde.KWin.reconfigure'], stdout=subprocess.DEVNULL, check=False)
         self.appearance_button.set_label('☀' if dark else '☾')
         self.appearance_button.set_tooltip_text('Switch to light mode' if dark else 'Switch to dark mode')
         for key, item in self.mode_items.items():
@@ -663,7 +700,7 @@ class Shell:
                   'org.xfce.mousepad.desktop': 'editor', 'xfce-settings-manager.desktop': 'settings'}
         name = custom.get(getattr(image, 'app_id', None),
                           'applications' if getattr(image, 'fallback', '') == 'view-app-grid-symbolic' else None)
-        if name:
+        if name and not self.has_tahoe_icons():
             image.set_from_pixbuf(self.custom_pixbuf(name, size))
         else:
             image.set_pixel_size(size)

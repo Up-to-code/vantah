@@ -11,14 +11,14 @@ slidingpopupsEnabled=true
 
 [Effect-blurplus]
 EdgeLighting=true
-GlowColor=#60FFFFFF
+GlowColor=#20FFFFFF
 FakeBlur=false
 BlurMatching=false
 BlurNonMatching=true
 BlurDocks=true
 BlurMenus=true
 TransparentBlur=true
-BlurStrength=3
+BlurStrength=8
 NoiseStrength=0
 TopCornerRadius=18
 BottomCornerRadius=18
@@ -27,12 +27,13 @@ MenuCornerRadius=18
 Brightness=0.82
 Saturation=1.15
 Contrast=1.05
-RefractionStrength=0.65
-RefractionEdgeSize=20
-RefractionRGBFringing=0.10
+RefractionStrength=0.30
+RefractionEdgeSize=12
+RefractionRGBFringing=0.025
 
 [org.kde.kdecoration2]
-library=org.kde.breeze
+library=org.kde.kwin.aurorae
+theme=__aurorae__svg__MacTahoe-Dark
 ButtonsOnLeft=XIA
 ButtonsOnRight=
 

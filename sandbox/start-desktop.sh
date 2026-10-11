@@ -5,7 +5,7 @@ mkdir -p "$XDG_RUNTIME_DIR"
 chmod 700 "$XDG_RUNTIME_DIR"
 width=${VANTAH_WIDTH:-1280}
 height=${VANTAH_HEIGHT:-800}
-if [ -r /home/sandbox/.config/vantah/display-size ]; then
+if [ -z "${VANTAH_WIDTH:-}${VANTAH_HEIGHT:-}" ] && [ -r /home/sandbox/.config/vantah/display-size ]; then
   read -r width height < /home/sandbox/.config/vantah/display-size
 fi
 case "$width:$height" in *[!0-9:]*|:*|*:) echo 'Invalid desktop size' >&2; exit 1;; esac

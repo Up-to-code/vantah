@@ -59,4 +59,14 @@ if 'Alpine Shell connection modifier reset' not in text:
     if anchor not in text:
         raise SystemExit('Unexpected noVNC UI source; no UI patch applied.')
     ui.write_text(text.replace(anchor, reset, 1))
-print('noVNC macOS modifier handling repaired.')
+# The KWin/Xvfb server has a fixed framebuffer and cannot honor noVNC's
+# remote-resize requests. Fit it locally even for saved resize=remote URLs.
+text = ui.read_text()
+if 'vAntah viewport fit' not in text:
+    original = "UI.rfb.scaleViewport = UI.getSetting('resize') === 'scale';"
+    fitted = """// vAntah viewport fit: fit fixed Xvfb displays and keep remote requests.
+        UI.rfb.scaleViewport = ['scale', 'remote'].includes(UI.getSetting('resize'));"""
+    if text.count(original) != 2:
+        raise SystemExit('Unexpected noVNC resize source; no sizing patch applied.')
+    ui.write_text(text.replace(original, fitted))
+print('noVNC keyboard handling and viewport fitting repaired.')

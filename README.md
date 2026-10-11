@@ -104,7 +104,8 @@ The source installed in Alpine is `~/.local/share/alpine-shell`.
 `fix-vnc.py` patches the sandbox's noVNC client so Mac Command stays Linux
 Super, releases modifiers after an intercepted host shortcut, and clears
 remote modifier state when reconnecting. This prevents ordinary letters from
-becoming menu accelerators. Reload the noVNC browser after installation.
+becoming menu accelerators. The viewer also fits the fixed KWin framebuffer when opening older
+`resize=remote` links. Reload the noVNC browser after installation.
 Upstream JavaScript backups are retained beside the modified files with the
 suffix `.before-alpine-shell`. The modified noVNC files retain their upstream
 MPL-2.0-or-later license; that license is separate from this shell's MIT license.
@@ -146,6 +147,8 @@ sh -n try.sh install.sh run-shell.sh sandbox/run.sh sandbox/start-desktop.sh
 # Test the patched client exported from the running demo:
 docker cp vantah-demo:/usr/share/novnc/core/input/keyboard.js /tmp/alpine-keyboard.js
 node sandbox/test-vnc-keyboard.cjs /tmp/alpine-keyboard.js
+docker cp vantah-demo:/usr/share/novnc/app/ui.js /tmp/vantah-vnc-ui.js
+node sandbox/test-vnc-sizing.cjs /tmp/vantah-vnc-ui.js
 ```
 
 The keyboard regression simulates a swallowed Mac Command release and checks

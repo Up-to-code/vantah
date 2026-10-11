@@ -2,10 +2,12 @@
 
 # vAntah
 
+[![Source checks](https://github.com/Up-to-code/vantah/actions/workflows/checks.yml/badge.svg)](https://github.com/Up-to-code/vantah/actions/workflows/checks.yml) · [MIT license](LICENSE) · [Contributing](CONTRIBUTING.md)
+
 A native glass desktop shell for Alpine Linux: translucent desktop chrome,
 a refractive dock, application search, dark mode, and motion controls.
 The current source uses KWin X11 and the real KWin Glass compositor effect.
-The [public 0.2.1 preview release](https://github.com/Up-to-code/vantah/releases/tag/v0.2.1-preview) includes the updated source, logo, screenshots and desktop video.
+The [public 0.2.1 preview release](https://github.com/Up-to-code/vantah/releases/tag/v0.2.1-preview) includes the updated source, logo and desktop videos. [Current screenshots](docs/screenshots/) are included in the source archive.
 
 ![Native Settings and dock](docs/screenshots/settings-en.jpg)
 
@@ -15,7 +17,7 @@ Native Files, Trash restore, dark/light appearance, live compositor glass, and
 original dark dock tiles now share a coordinated interface. The running dots
 sit in an overlay at the bottom, so they cannot shift icon centers.
 
-[15-second real desktop walkthrough](docs/vantah-tour.mp4) ·
+[15-second original desktop walkthrough](docs/social/vantah-original-15s.mp4) ·
 [Detailed installation guide](docs/install-guide.md) ·
 [دليل التثبيت والاستخدام بالعربية](docs/install-guide-ar.md) ·
 [Apple reference comparison](docs/visual-comparison.html)
@@ -172,6 +174,12 @@ built and booted, and the patched noVNC keyboard regression passed.
 The complete 140-second desktop recording sped up to 15 seconds, with original music. No captions, stickers, extra framing or background blur. [Full recording](https://github.com/Up-to-code/vantah/releases/download/v0.2.1-preview/vantah-system-session.mp4) · [Silent copy for choosing your own music](https://github.com/Up-to-code/vantah/releases/download/v0.2.1-preview/vantah-original-15s-silent.mp4).
 
 Rebuild with `python3 scripts/build-release-video.py` after generating the music with the system-tour script. Requires FFmpeg and Python 3.
+
+## Subtitled English story
+
+[![Watch the subtitled story](docs/social/vantah-story-subtitles-poster.jpg)](https://github.com/Up-to-code/vantah/releases/download/v0.2.1-preview/vantah-story-subtitles-en.mp4)
+
+Five timed subtitle cards explain the Alpine Linux base, iOS-inspired workspace, English/Arabic support, Raspberry Pi robotics goal and public source. This download is silent so you can choose your own music. [Editable SRT subtitles](docs/social/vantah-story-subtitles-en.srt). Rebuild with `python3 scripts/build-subtitled-video.py --font /path/to/bold.ttf` (Python 3, Pillow and FFmpeg).
 
 ## TikTok system story
 

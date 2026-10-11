@@ -1,0 +1,26 @@
+1
+00:00:00,000 --> 00:00:03,000
+I took Alpine Linux.
+Not built from scratch.
+
+2
+00:00:03,000 --> 00:00:06,000
+iOS-inspired glass.
+My own workspace.
+
+3
+00:00:06,000 --> 00:00:09,000
+English and Arabic.
+Made for how I work.
+
+4
+00:00:09,000 --> 00:00:12,000
+Next goal:
+Raspberry Pi robotics.
+
+5
+00:00:12,000 --> 00:00:15,000
+vAntah • Open source
+Up-to-code/vantah
+on GitHub
+

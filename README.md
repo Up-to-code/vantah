@@ -14,6 +14,10 @@ adjustments and remaining fidelity differences.
 
 ![KWin Glass launcher and dock](docs/screenshots/kwin-glass.jpg)
 
+Native GTK menu and compositor-rounded window:
+
+![Native GTK menu and rounded window](docs/screenshots/gtk-menus.jpg)
+
 Earlier v0.1.1 Docker demo:
 
 ![Fresh dark desktop](docs/screenshots/fresh-demo.jpg)
@@ -81,6 +85,9 @@ A custom native desktop shell for the Alpine Linux sandbox. The shell replaces
 Xfce's panels with a glass menu bar, application search, and an application dock.
 GTK 3 draws the UI and libwnck controls real windows. KWin X11 6.5.6 manages
 windows; the pinned KWin Glass shader samples and refracts the live backdrop.
+A pinned KWin rounding effect clips all four rendered window corners, including
+GTK client content. GTK application menus share the compact menu styling and
+request glass inside their visible bounds, excluding transparent shadow margins.
 [Backend details and source revisions](docs/kwin-glass.md) explain the Alpine
 GLX compatibility patch and software rendering. Building KWin requires several
 GB of free disk space and a substantial first build.

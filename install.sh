@@ -7,6 +7,7 @@ revision=0ae94cf5e709a894a9f1f54544cb17deb7f77d58
 kwin_revision=f53992fd00bd446c478adda5d4cf8b588cb32b75
 docker exec -u 0 "$container" apk add --no-cache py3-gobject3 py3-cairo libwnck3 xprop tzdata \
   xvfb x11vnc kwin breeze breeze-cursors mesa-dri-gallium mesa-gl qt6-qtsensors
+docker cp gtk-menus.css "$container":/tmp/vantah-gtk-menus.css
 docker cp sandbox/install-appearance.sh "$container":/tmp/vantah-install-appearance.sh
 docker exec -u 0 "$container" sh /tmp/vantah-install-appearance.sh
 installed=$(docker exec "$container" cat /usr/share/doc/vantah-glass/REVISION 2>/dev/null || true)
@@ -17,6 +18,12 @@ if [ "$installed" != "$revision" ] || [ "$installed_kwin" != "$kwin_revision" ];
   docker cp sandbox/build-glass.sh "$container":/tmp/vantah-build/
   docker cp sandbox/patch-kwin-x11.py "$container":/tmp/vantah-build/
   docker exec -u 0 "$container" sh /tmp/vantah-build/build-glass.sh
+fi
+corners_revision=c1178d94ff2ec0db8d4d9a9782a3eb06aec13ce6
+installed_corners=$(docker exec "$container" cat /usr/share/doc/vantah-corners/REVISION 2>/dev/null || true)
+if [ "$installed_corners" != "$corners_revision" ]; then
+  docker cp sandbox/build-rounded-corners.sh "$container":/tmp/vantah-build-rounded-corners.sh
+  docker exec -u 0 "$container" sh /tmp/vantah-build-rounded-corners.sh
 fi
 docker exec -u 1000 "$container" mkdir -p /home/sandbox/.local/share/alpine-shell /home/sandbox/.config/autostart
 # Explicit archive ownership also handles host UID differences on macOS.
@@ -29,6 +36,7 @@ docker exec -u 1000 "$container" sh -c '
   root=/home/sandbox/.local/share/alpine-shell
   cp "$root/alpine-shell.desktop" /home/sandbox/.config/autostart/alpine-shell.desktop
   cp "$root/kwinrc" /home/sandbox/.config/kwinrc
+  python3 "$root/sandbox/install-menu-overlay.py"
 '
 docker cp fix-vnc.py "$container":/tmp/vantah-fix-vnc.py
 docker cp sandbox/start-desktop.sh "$container":/tmp/vantah-start-desktop

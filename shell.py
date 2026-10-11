@@ -18,6 +18,7 @@ gi.require_version('GdkX11', '3.0')
 gi.require_version('Wnck', '3.0')
 from gi.repository import Gdk, GdkPixbuf, GdkX11, Gio, GLib, Gtk, Pango, Wnck
 import cairo
+from gtk_menu_glass import GtkMenuGlass
 
 ROOT = Path(__file__).resolve().parent
 PID_FILE = Path(f'/tmp/alpine-shell-{os.getuid()}.pid')
@@ -65,6 +66,11 @@ class Shell:
                 ctypes.POINTER(ctypes.c_ubyte), ctypes.c_int]
             self.glass_xlib.XFlush.argtypes = [ctypes.c_void_p]
             self.glass_connection = self.glass_xlib.XOpenDisplay(None)
+        self.gtk_menu_glass = None
+        if self.glass_xlib and self.glass_connection:
+            self.gtk_menu_glass = GtkMenuGlass(self.display, self.glass_xlib,
+                                             self.glass_connection, self.rounded_region)
+            GLib.timeout_add(150, self.gtk_menu_glass.update)
         self.launcher = None
         self.panels = {}
         self.category = 'All'

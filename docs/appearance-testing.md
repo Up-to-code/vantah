@@ -69,3 +69,31 @@ labels, menu spacing, live glass, and window controls. Python syntax, shell synt
 and the five installer regressions passed. Rams again returned an exhausted-credit
 error. Exact native app layouts, bottom client corners, Apple typography/icons and
 optics remain different; these changes do not certify an exact macOS reproduction.
+
+## Native corners and menu glass follow-up
+
+Built and installed pinned KDE-Rounded-Corners against the running KWin X11
+6.5.6. D-Bus reports both `kwin4_effect_shapecorners` and `glass_x11` loaded;
+the corner shaders report successful loading. Visually checked rounded opaque
+GTK bottom corners, maximized square edges, restored rounded edges, and light
+and dark appearance. Typing `e` in Mousepad entered text normally.
+
+GTK menus now request blur only within their visible content bounds. The prior
+large blurred surround came from including `_GTK_FRAME_EXTENTS` shadow margins.
+Four tests against the real X server pass: excluding shadow extents, preserving
+existing nonempty and empty app blur regions, and removing a closed menu from
+tracking. Five installer regressions, Python syntax, shell syntax, CSS parsing,
+and preservation/idempotence of the user CSS import pass. Existing CSS is kept;
+a marked import loads the shared menu overlay at user-style priority.
+
+The upgrade installer completed and rebooted the existing sandbox. Docker's VM
+needed a restart after a filesystem I/O error during dependency installation;
+both previously running Alpine containers were restored. The clean multistage
+image is still untested. Rams `quick_review` was requested with `via: rules` but
+remains unavailable because its review credits are exhausted. The screenshots
+record actual results; exact Apple layout, menu placement, typography, icon art,
+selection rendering and optical equivalence remain unproven.
+
+The final launcher check also verified explicit visible-region blur with an
+empty force-blur whitelist, and a shell-class exclusion in the corner effect.
+This prevents filling the gap between the search capsule and application grid.

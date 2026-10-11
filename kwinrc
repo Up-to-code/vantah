@@ -3,6 +3,7 @@ Backend=OpenGL
 GLCore=true
 
 [Plugins]
+kwin4_effect_shapecornersEnabled=true
 blurEnabled=false
 glassEnabled=true
 glass_x11Enabled=true
@@ -13,12 +14,13 @@ slidingpopupsEnabled=true
 EdgeLighting=false
 GlowColor=#20FFFFFF
 FakeBlur=false
-BlurMatching=false
-BlurNonMatching=true
+WindowClasses=
+BlurMatching=true
+BlurNonMatching=false
 BlurDocks=true
-BlurMenus=true
+BlurMenus=false
 TransparentBlur=true
-BlurStrength=8
+BlurStrength=12
 NoiseStrength=0
 TopCornerRadius=16
 BottomCornerRadius=16
@@ -27,8 +29,8 @@ MenuCornerRadius=12
 Brightness=0.98
 Saturation=1.0
 Contrast=1.0
-RefractionStrength=0.12
-RefractionEdgeSize=6
+RefractionStrength=0.20
+RefractionEdgeSize=8
 RefractionRGBFringing=0.0
 
 [org.kde.kdecoration2]
@@ -37,3 +39,22 @@ theme=__aurorae__svg__MacTahoe-Dark
 ButtonsOnLeft=XIA
 ButtonsOnRight=
 
+
+[Round-Corners]
+Exclusions=shell.py
+Size=16
+InactiveCornerRadius=16
+UseSquircleShape=true
+Squircleness=0.55
+UseNativeDecorationShadows=true
+OutlineThickness=0
+InactiveOutlineThickness=0
+SecondOutlineThickness=0
+InactiveSecondOutlineThickness=0
+OuterOutlineThickness=0
+InactiveOuterOutlineThickness=0
+IncludeNormalWindows=true
+IncludeDialogs=true
+DisableRoundMaximize=true
+DisableRoundTile=true
+DisableRoundFullScreen=true

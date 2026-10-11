@@ -147,8 +147,8 @@ window#launcher-window.light, window#panel-window.light { color: #252735; }
 .kwin .dock { background: rgba(36,36,38,0.28); }
 .kwin .menu-bar { background: rgba(28,28,30,0.28); }
 .kwin .launcher-search { background: linear-gradient(to bottom, rgba(36,36,38,0.78), rgba(5,5,7,0.94)); }
-.kwin .app-grid-card { background: rgba(32,32,34,0.78); }
-.kwin .menu-card { background: rgba(38,38,40,0.86); }
+.kwin .app-grid-card { background: rgba(28,28,30,0.64); }
+.kwin .menu-card { background: rgba(34,34,36,0.72); }
 .kwin.light .dock { background: rgba(242,246,255,0.18); }
 .kwin.light .menu-bar { background: rgba(242,246,255,0.46); }
 .kwin.light .launcher-search, .kwin.light .app-grid-card, .kwin.light .menu-card {

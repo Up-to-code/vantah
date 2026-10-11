@@ -1,0 +1,36 @@
+/* vAntah GTK 3 application menus. Installed as a theme overlay, not user config. */
+menu, .background.popup > menu, .background.csd > menu {
+  border-radius: 10px;
+  padding: 5px;
+  border: 1px solid alpha(@theme_fg_color, 0.15);
+  background-color: alpha(@theme_bg_color, 0.86);
+  background-image: none;
+  box-shadow: 0 8px 24px alpha(black, 0.22);
+  font-family: "Inter", "DejaVu Sans", sans-serif;
+  font-size: 13px;
+}
+menu menuitem {
+  min-height: 22px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: none;
+  background-image: none;
+}
+menu menuitem:hover, menu menuitem:selected, menu menuitem:active {
+  background-image: none;
+  box-shadow: none;
+  background-color: #2864dc;
+  color: white;
+}
+menu menuitem:disabled { color: alpha(@theme_fg_color, 0.45); }
+menu separator { min-height: 1px; margin: 4px 7px; background-color: alpha(@theme_fg_color, 0.14); }
+menu menuitem accelerator { color: alpha(@theme_fg_color, 0.6); margin-left: 28px; }
+menu menuitem:hover accelerator { color: alpha(white, 0.85); }
+menubar { background-image: none; background-color: @theme_bg_color; padding: 0 6px; }
+menubar > menuitem { min-height: 22px; padding: 1px 7px; border-radius: 5px; }
+menubar > menuitem:hover { background-color: alpha(@theme_fg_color, 0.10); color: @theme_fg_color; }
+
+/* Keep GTK popup shadow extents transparent; only the menu paints material. */
+window.popup.background { background-color: transparent; background-image: none; }
+.csd.popup decoration { background-color: transparent; background-image: none; }

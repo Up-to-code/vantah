@@ -23,6 +23,14 @@ sed -i 's/^  install_app$/  : # vAntah manages appearance/' "$build_root/MacTaho
 USER=$(id -un) bash "$build_root/MacTahoe-gtk-theme/install.sh" -d /usr/share/themes -c light -c dark -o normal --silent-mode
 [ -s /usr/share/themes/MacTahoe-Dark/gtk-3.0/gtk.css ]
 [ -s /usr/share/themes/MacTahoe-Light/gtk-3.0/gtk.css ]
+# Keep the application-menu overlay in the installed theme, preserving user CSS.
+for theme in /usr/share/themes/MacTahoe-*; do
+  [ -d "$theme/gtk-3.0" ] || continue
+  cp "${VANTAH_MENU_CSS:-/tmp/vantah-gtk-menus.css}" "$theme/gtk-3.0/vantah-menus.css"
+  for style in "$theme/gtk-3.0/gtk.css" "$theme/gtk-3.0/gtk-dark.css"; do
+    [ ! -f "$style" ] || printf '\n@import url("vantah-menus.css");\n' >> "$style"
+  done
+done
 for color in Light Dark; do
   theme=MacTahoe-$color
   dest=/usr/share/aurorae/themes/$theme

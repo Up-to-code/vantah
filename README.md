@@ -5,7 +5,7 @@
 A native glass desktop shell for Alpine Linux: translucent desktop chrome,
 a refractive dock, application search, dark mode, and motion controls.
 The current source uses KWin X11 and the real KWin Glass compositor effect.
-The published v0.1.1 installer below still provides the earlier Picom demo.
+The [public 0.2 preview release](https://github.com/Up-to-code/vantah/releases/tag/v0.2.0-preview) includes the updated source, logo, screenshots and desktop video.
 
 ![Native Settings and dock](docs/screenshots/settings-en.jpg)
 

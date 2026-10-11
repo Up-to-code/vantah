@@ -1,19 +1,33 @@
-"""Render Alpine Shell's original glass icon set as editable SVG assets."""
+"""Generate vAntah's compact, editable dark-tile dock icons."""
 from pathlib import Path
 
-icons = {
-    'files': ('#78d4ff', '#1479df', '<path d="M12 25V19Q12 15 16 15H27L32 21H49Q53 21 53 25V45Q53 49 49 49H16Q12 49 12 45Z" fill="#a9e6ff"/><path d="M12 28Q12 25 16 25H49Q53 25 53 29V45Q53 49 49 49H16Q12 49 12 45Z" fill="#e0f6ff" fill-opacity=".72" stroke="white" stroke-opacity=".7"/><path d="M22 36H44" stroke="#167ed3" stroke-width="2" stroke-linecap="round"/>'),
-    'terminal': ('#606b82', '#101728', '<rect x="11" y="14" width="42" height="36" rx="7" fill="#111b30" fill-opacity=".72" stroke="#b6c9e8" stroke-opacity=".5"/><circle cx="17" cy="20" r="1.5" fill="#fa8290"/><circle cx="22" cy="20" r="1.5" fill="#fbd58d"/><circle cx="27" cy="20" r="1.5" fill="#88e5b3"/><path d="M19 29L26 35L19 41M31 42H42" fill="none" stroke="#f4f8ff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'),
-    'editor': ('#eef4ff', '#86a7da', '<rect x="17" y="12" width="30" height="42" rx="5" fill="#fff" fill-opacity=".87" stroke="white"/><path d="M23 23H40M23 30H38M23 37H35M23 44H32" stroke="#90a7c9" stroke-width="2" stroke-linecap="round"/><path d="M36 42L48 20L53 23L41 45L35 49Z" fill="#4e8deb" stroke="#e4efff" stroke-width="1.2"/>'),
-    'settings': ('#b5c3e7', '#536ca7', '<g stroke="#f3f7ff" stroke-width="3" stroke-linecap="round"><path d="M16 21H48M16 32H48M16 43H48"/></g><g fill="#d7e7ff" stroke="#41618f" stroke-width="1.3"><circle cx="25" cy="21" r="4.5"/><circle cx="40" cy="32" r="4.5"/><circle cx="28" cy="43" r="4.5"/></g>'),
-    'applications': ('#bfa9ff', '#6150ce', ''.join(f'<rect x="{x}" y="{y}" width="10" height="10" rx="3" fill="{color}" stroke="white" stroke-opacity=".55"/>' for x, y, color in [(14,14,'#bde8ff'),(27,14,'#e6c4ff'),(40,14,'#ffe1b5'),(14,27,'#b7f1d4'),(27,27,'#cbd9ff'),(40,27,'#ffccd5'),(14,40,'#e1ccff'),(27,40,'#ffe2b4'),(40,40,'#c7eeff')]))
+symbols = {
+    'files': '''<path d="M8 22V16Q8 11 13 11H27L33 18H51Q56 18 56 23V49Q56 54 51 54H13Q8 54 8 49Z" fill="url(#blue)"/>
+<path d="M8 26H56V49Q56 54 51 54H13Q8 54 8 49Z" fill="#17c7fa"/>
+<path d="M10 27H54" stroke="#7ce8ff" stroke-width="2" stroke-opacity=".65"/>
+<path d="M23 36H42M23 42H38" stroke="#07537c" stroke-width="3" stroke-linecap="round"/>''',
+    'terminal': '''<path d="M14 19L29 31L14 43" fill="none" stroke="#f5f6f8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M35 46H51" stroke="#b9bcc3" stroke-width="4" stroke-linecap="round"/>''',
+    'editor': '''<rect x="12" y="9" width="35" height="46" rx="6" fill="#f0f4fa"/>
+<path d="M19 20H39M19 28H39M19 36H34M19 44H29" stroke="#9aabc4" stroke-width="2.3" stroke-linecap="round"/>
+<path d="M32 43L48 12Q49 10 51 11L56 14Q58 15 57 17L41 48L31 54Z" fill="url(#blue)" stroke="#b1edff" stroke-width="1.2"/>
+<path d="M31 54L33 44L41 48Z" fill="#20354e"/>''',
+    'settings': '''<g stroke="#d4d8e0" stroke-width="3.5" stroke-linecap="round"><path d="M10 17H54M10 32H54M10 47H54"/></g>
+<g fill="#f7f8fc" stroke="#6d7582" stroke-width="1.5"><circle cx="24" cy="17" r="6"/><circle cx="43" cy="32" r="6"/><circle cx="21" cy="47" r="6"/></g>''',
+    'applications': ''.join(
+        f'<rect x="{10+column*16}" y="{10+row*16}" width="12" height="12" rx="3.5" fill="{color}"/>'
+        for (row, column), color in zip(
+            ((row, column) for row in range(3) for column in range(3)),
+            ['#27c8fa', '#b697ff', '#ffbf53', '#3edc94', '#588fff', '#ff718d', '#db9cff', '#ffd565', '#64dde9'])),
 }
-for name, (top, bottom, symbol) in icons.items():
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-<defs><linearGradient id="base" x2="0" y2="1"><stop stop-color="{top}"/><stop offset="1" stop-color="{bottom}"/></linearGradient>
-<linearGradient id="shine" x2="0" y2="1"><stop stop-color="white" stop-opacity=".47"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs>
-<rect x="2" y="3" width="60" height="60" rx="16" fill="#000" fill-opacity=".17"/>
-<rect x="2" y="1" width="60" height="60" rx="16" fill="url(#base)" stroke="white" stroke-opacity=".44"/>
-<path d="M3 24V17Q3 2 18 2H46Q61 2 61 17V24Q33 35 3 24Z" fill="url(#shine)"/>
-{symbol}</svg>'''
+for name, symbol in symbols.items():
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="{name.title()}">
+<defs>
+<linearGradient id="tile" x2="0" y2="1"><stop stop-color="#282a2d"/><stop offset="1" stop-color="#101113"/></linearGradient>
+<linearGradient id="blue" x2="0" y2="1"><stop stop-color="#5cdfff"/><stop offset="1" stop-color="#078bdc"/></linearGradient>
+</defs>
+<rect x="1" y="1" width="62" height="62" rx="16" fill="url(#tile)" stroke="#ffffff" stroke-opacity=".12"/>
+<path d="M17 2H47Q62 2 62 17" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+{symbol}
+</svg>'''
     Path(__file__).with_name(f'{name}.svg').write_text(svg)

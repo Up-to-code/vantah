@@ -18,10 +18,10 @@ class InstallerTests(unittest.TestCase):
         self.base = Path(self.temp.name)
         fixtures = self.base / 'fixtures'
         fixtures.mkdir()
-        source = self.base / 'source' / 'vantah-v0.1.0'
+        source = self.base / 'source' / 'vantah-v0.1.1'
         (source / 'sandbox').mkdir(parents=True)
         (source / 'sandbox/run.sh').write_text((ROOT / 'sandbox/run.sh').read_text())
-        archive = fixtures / 'vantah-v0.1.0.tar.gz'
+        archive = fixtures / 'vantah-v0.1.1.tar.gz'
         with tarfile.open(archive, 'w:gz') as handle:
             handle.add(source, arcname=source.name)
         digest = hashlib.sha256(archive.read_bytes()).hexdigest()
@@ -33,7 +33,7 @@ import json, os, sys
 a = sys.argv[1:]
 with open(os.environ['CALLS'], 'a') as f: f.write(json.dumps(a)+'\\n')
 if a[:2] == ['container','inspect']: sys.exit(0 if os.environ['STATE'] != 'missing' else 1)
-if a[0] == 'inspect': print('v0.1.0' if os.environ['STATE'] == 'owned' else 'other')
+if a[0] == 'inspect': print('v0.1.1' if os.environ['STATE'] == 'owned' else 'other')
 if a[0] == 'port': print('127.0.0.1:6099')
 ''')
         self.write_command(scripts / 'curl', '''
@@ -59,7 +59,7 @@ if os.environ.get('CORRUPT') and name.endswith('.tar.gz'): dest.write_bytes(b'co
         result = self.run_installer()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((self.base/'install/sandbox/run.sh').exists())
-        self.assertIn('org.qentrah.vantah=v0.1.0', (self.base/'calls').read_text())
+        self.assertIn('org.qentrah.vantah=v0.1.1', (self.base/'calls').read_text())
         self.assertIn('127.0.0.1:6081', result.stdout)
 
     def test_corrupt_archive_is_rejected_before_build(self):

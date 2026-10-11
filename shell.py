@@ -202,16 +202,16 @@ class Shell:
         return image
 
     def build_dock(self):
-        self.dock_box = style(Gtk.Box(spacing=3), 'dock')
+        self.dock_box = style(Gtk.Box(spacing=2), 'dock')
         self.dock.add(self.dock_box)
         launcher = self.dock_item(None, 'Applications', 'view-app-grid-symbolic', self.toggle_launcher)
         self.dock_box.pack_start(launcher[0], False, False, 0)
-        self.dock_box.pack_start(style(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), 'dock-separator'), False, False, 8)
+        self.dock_box.pack_start(style(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), 'dock-separator'), False, False, 4)
         for app_id, name, fallback, classes in self.pins:
             item, dot = self.dock_item(app_id, name, fallback, lambda a=app_id, c=classes: self.activate_app(a, c))
             self.pin_widgets.append((classes, dot, item))
             self.dock_box.pack_start(item, False, False, 0)
-        self.extras = Gtk.Box(spacing=3)
+        self.extras = Gtk.Box(spacing=2)
         self.dock_box.pack_start(self.extras, False, False, 0)
 
     def dock_item(self, app_id, name, icon_name, action, window=None):
@@ -227,10 +227,10 @@ class Shell:
             image = self.icon(app_id, icon_name, 44)
         obj.add(image)
         image.app_id, image.fallback = app_id, icon_name
-        obj.set_size_request(54, 54)
-        obj.connect('enter-notify-event', lambda *_: self.animate_icon(image, 49))
-        obj.connect('leave-notify-event', lambda *_: self.animate_icon(image, 40))
-        self.resize_icon(image, 40)
+        obj.set_size_request(56, 56)
+        obj.connect('enter-notify-event', lambda *_: self.animate_icon(image, 54))
+        obj.connect('leave-notify-event', lambda *_: self.animate_icon(image, 48))
+        self.resize_icon(image, 48)
         obj.connect('button-press-event', lambda _, e: self.dock_context(e, app_id, window))
         dot = style(Gtk.Label(label=''), 'running-dot')
         outer.pack_start(obj, False, False, 0)
@@ -464,15 +464,15 @@ class Shell:
     def animate_icon(self, image, target):
         image.animation_target = target
         if self.preferences['reduced_motion']:
-            self.resize_icon(image, 40)
+            self.resize_icon(image, 48)
             return False
         if getattr(image, 'animation_active', False):
             return False
         image.animation_active = True
-        image.animation_size = float(getattr(image, 'current_size', 40))
+        image.animation_size = float(getattr(image, 'current_size', 48))
         def frame():
             if self.preferences['reduced_motion']:
-                self.resize_icon(image, 40)
+                self.resize_icon(image, 48)
                 image.animation_active = False
                 return False
             image.animation_size += (image.animation_target - image.animation_size) * 0.25

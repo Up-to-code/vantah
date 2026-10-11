@@ -1,7 +1,7 @@
 #!/bin/sh
-# vAntah v0.1.0: download, verify, and start the isolated Docker desktop.
+# vAntah v0.1.1: download, verify, and start the isolated Docker desktop.
 set -eu
-version=v0.1.0
+version=v0.1.1
 repo=Up-to-code/vantah
 container=${VANTAH_CONTAINER:-vantah-demo}
 port=${VANTAH_PORT:-6081}

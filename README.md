@@ -14,7 +14,7 @@ Application search in the themed sandbox:
 ![Application search](docs/screenshots/applications.jpg)
 
 Download the source, logo, wallpaper, and screenshots from the
-[public v0.1.0 release](https://github.com/Up-to-code/vantah/releases/tag/v0.1.0).
+[public v0.1.1 release](https://github.com/Up-to-code/vantah/releases/tag/v0.1.1).
 
 ## One-command installer
 
@@ -23,7 +23,7 @@ Requires Docker with a running Linux engine, `curl`, `tar`, and `shasum` or
 Windows users can run the command inside WSL with Docker integration.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Up-to-code/vantah/v0.1.0/try.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Up-to-code/vantah/v0.1.1/try.sh | sh
 ```
 
 The installer downloads the versioned release, checks its SHA-256 checksum,
@@ -31,7 +31,9 @@ builds the image for your machine, and starts a localhost-only desktop. Open the
 URL it prints. Running it again restarts the same container. Set `VANTAH_PORT`,
 `VANTAH_CONTAINER`, or `VANTAH_INSTALL_DIR` to customize it. It requires no sudo and
 does not install Docker or change your host desktop. Stop it with
-`docker stop vantah-demo`. Your container files remain available.
+`docker stop vantah-demo`. Your container files remain available. If an earlier version already owns
+`vantah-demo`, use `VANTAH_CONTAINER=vantah-demo-v011` on the `sh` side of the
+installer command, and set a free `VANTAH_PORT`. Existing containers are preserved.
 
 ## Build from source
 
@@ -84,8 +86,10 @@ The shell starts automatically with the Alpine desktop.
 
 `shell.py` is the native shell, `shell.css` defines its UI, and the two Picom
 configuration files define compositor behavior with and without animation.
-The original glass dock icons are editable SVGs in `icons/`; `icons/generate.py`
+The compact dark-tile dock icons are editable SVGs in `icons/`; `icons/generate.py`
 regenerates them. Dock hover zoom uses cached images and native animation timers.
+Dock symbols render at 48 pixels with a 54-pixel hover size, inside 56-pixel
+click targets. The dark tiles use near-full-frame artwork with tighter gaps.
 The source installed in Alpine is `~/.local/share/alpine-shell`.
 
 `fix-vnc.py` patches the sandbox's noVNC client so Mac Command stays Linux

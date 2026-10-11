@@ -1,7 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-<defs><linearGradient id="base" x2="0" y2="1"><stop stop-color="#eef4ff"/><stop offset="1" stop-color="#86a7da"/></linearGradient>
-<linearGradient id="shine" x2="0" y2="1"><stop stop-color="white" stop-opacity=".47"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs>
-<rect x="2" y="3" width="60" height="60" rx="16" fill="#000" fill-opacity=".17"/>
-<rect x="2" y="1" width="60" height="60" rx="16" fill="url(#base)" stroke="white" stroke-opacity=".44"/>
-<path d="M3 24V17Q3 2 18 2H46Q61 2 61 17V24Q33 35 3 24Z" fill="url(#shine)"/>
-<rect x="17" y="12" width="30" height="42" rx="5" fill="#fff" fill-opacity=".87" stroke="white"/><path d="M23 23H40M23 30H38M23 37H35M23 44H32" stroke="#90a7c9" stroke-width="2" stroke-linecap="round"/><path d="M36 42L48 20L53 23L41 45L35 49Z" fill="#4e8deb" stroke="#e4efff" stroke-width="1.2"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Editor">
+<defs>
+<linearGradient id="tile" x2="0" y2="1"><stop stop-color="#282a2d"/><stop offset="1" stop-color="#101113"/></linearGradient>
+<linearGradient id="blue" x2="0" y2="1"><stop stop-color="#5cdfff"/><stop offset="1" stop-color="#078bdc"/></linearGradient>
+</defs>
+<rect x="1" y="1" width="62" height="62" rx="16" fill="url(#tile)" stroke="#ffffff" stroke-opacity=".12"/>
+<path d="M17 2H47Q62 2 62 17" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+<rect x="12" y="9" width="35" height="46" rx="6" fill="#f0f4fa"/>
+<path d="M19 20H39M19 28H39M19 36H34M19 44H29" stroke="#9aabc4" stroke-width="2.3" stroke-linecap="round"/>
+<path d="M32 43L48 12Q49 10 51 11L56 14Q58 15 57 17L41 48L31 54Z" fill="url(#blue)" stroke="#b1edff" stroke-width="1.2"/>
+<path d="M31 54L33 44L41 48Z" fill="#20354e"/>
+</svg>

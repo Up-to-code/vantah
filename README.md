@@ -164,3 +164,7 @@ KWin and `glass_x11` loaded. [Appearance checks](docs/appearance-testing.md) rec
 the tested controls and limitations. The revised multistage Docker image has not yet
 been validated from a clean build. The earlier v0.1.1 image and installer were
 built and booted, and the patched noVNC keyboard regression passed.
+
+## TikTok videos
+
+Download the [English](docs/social/vantah-tiktok-en.mp4) or [Arabic](docs/social/vantah-tiktok-ar.mp4) 15-second portrait video, with captions and original music. [Subtitle files, soundtrack and rebuilding instructions](docs/social/README.md).

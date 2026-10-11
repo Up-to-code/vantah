@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Alpine Shell
+Comment=Native glass desktop shell
+Exec=sh /home/sandbox/.local/share/alpine-shell/run-shell.sh
+OnlyShowIn=XFCE;
+Terminal=false
+StartupNotify=false
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<title id="title">Alpine Glass Shell</title><desc id="desc">A glass diamond enclosing two alpine peaks.</desc>
+<defs><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b6efff"/><stop offset=".48" stop-color="#a29bff"/><stop offset="1" stop-color="#6239d1"/></linearGradient><linearGradient id="snow" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c7e5ff"/></linearGradient></defs>
+<path d="M128 12Q136 12 143 19L237 113Q252 128 237 143L143 237Q128 252 113 237L19 143Q4 128 19 113L113 19Q120 12 128 12Z" fill="url(#glass)" stroke="#ddf4ff" stroke-width="3"/>
+<path d="M20 114L114 20Q128 6 142 20L204 82Q117 57 20 114Z" fill="#fff" opacity=".3"/>
+<path d="M54 167L105 88L141 143L162 111L208 179H65Q48 179 54 167Z" fill="url(#snow)"/>
+<path d="M105 88L126 120L110 117L100 129L87 116Z" fill="#fff"/>
+<path d="M126 153L141 143L162 111L181 139L162 132L155 149L147 147L132 173Z" fill="#6d6bcc" opacity=".48"/>
+<path d="M68 191H186" stroke="#f0f6ff" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+</svg>

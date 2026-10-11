@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Speed the real full-system recording to 40 seconds, without UI crops.
+"""Build a 40-second TikTok story: centered full desktop over live blur.
 Requires ffmpeg, ffprobe, Pillow, arabic-reshaper and python-bidi.
 """
 from pathlib import Path
@@ -14,20 +14,20 @@ OUT=ROOT/'docs/social'
 DURATION=40
 RANGES=[(0,5),(5,10),(10,16),(16,20),(20,25),(25,34),(34,40)]
 LINES={
-'en': [ ['vAntah.', 'My take on a Linux operating system.'],
-        ['I love the macOS style.', 'I wanted a system I could change.'],
-        ['Install an app.', 'Use it right from the terminal.'],
-        ['A Finder-inspired Files app.', 'For the work I actually do.'],
-        ['Write. Edit. Save.', 'A system I can make my own.'],
-        ['Glass. Settings. Arabic.', 'Built on Alpine Linux.'],
-        ['Up-to-code/vantah', 'The source is on GitHub.'] ],
-'ar': [ ['vAntah.', 'رؤيتي لنظام تشغيل مبني على لينكس.'],
-        ['أحب أسلوب macOS.', 'وأريد نظامًا أستطيع تغييره.'],
-        ['ثبّت تطبيقًا.', 'واستخدمه مباشرة من الطرفية.'],
-        ['تطبيق ملفات مستوحى من Finder.', 'للعمل الذي أقوم به فعلًا.'],
-        ['اكتب. عدّل. احفظ.', 'نظام أستطيع أن أجعله يناسبني.'],
-        ['زجاج. إعدادات. عربية.', 'مبني على ألباين لينكس.'],
-        ['Up-to-code/vantah', 'المصدر متاح على GitHub.'] ]}
+'en': [ ['I want Linux', 'for Raspberry Pi robotics.'],
+        ['But I love', 'the iOS look.'],
+        ['So I reshaped Linux', 'into my own workspace.'],
+        ['My tools. My files.', 'My way of working.'],
+        ['I want it small,', 'and sized for my workspace.'],
+        ['I speak Arabic.', 'So I made my desktop Arabic too.'],
+        ['This is vAntah.', 'Up-to-code/vantah on GitHub.'] ],
+'ar': [ ['أريد لينكس', 'لروبوتات راسبيري باي.'],
+        ['لكنني أحب', 'أسلوب iOS.'],
+        ['لذلك أعدت تشكيل لينكس', 'ليصبح مساحة عملي الخاصة.'],
+        ['أدواتي. ملفاتي.', 'وطريقتي في العمل.'],
+        ['أريده صغيرًا،', 'وبحجم يناسب مساحة عملي.'],
+        ['أنا أتحدث العربية.', 'لذلك جعلت سطح مكتبي عربيًا أيضًا.'],
+        ['هذا هو vAntah.', 'Up-to-code/vantah على GitHub.'] ]}
 
 def run(*args): subprocess.run(args,check=True)
 
@@ -58,8 +58,9 @@ def soundtrack(path):
 
 def main():
     p=argparse.ArgumentParser()
-    p.add_argument('--font',default='/System/Library/Fonts/Helvetica.ttc')
+    p.add_argument('--font',default='/System/Library/Fonts/Supplemental/Arial Bold.ttf')
     p.add_argument('--arabic-font',default='/System/Library/Fonts/SFArabic.ttf')
+    p.add_argument('--emoji-font',default='/System/Library/Fonts/Apple Color Emoji.ttc')
     args=p.parse_args()
     source=OUT/'vantah-system-session.mp4'
     info=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','json',str(source)]))
@@ -71,19 +72,36 @@ def main():
         for lang,captions in LINES.items():
             timeline=[]
             for i,((a,b),lines) in enumerate(zip(RANGES,captions)):
-                card=Image.new('RGB',(1280,896),'#fafcff'); d=ImageDraw.Draw(card)
-                font=ImageFont.truetype(args.arabic_font if lang=='ar' else args.font,36)
+                card=Image.new('RGBA',(1080,1920),(0,0,0,0)); d=ImageDraw.Draw(card)
+                fontpath=args.arabic_font if lang=='ar' else args.font
+                font=ImageFont.truetype(fontpath,58)
                 for j,line in enumerate(lines):
                     if lang=='ar': line=get_display(arabic_reshaper.reshape(line))
-                    d.text((640,782+j*46),line,fill='#172b46',font=font,anchor='mt')
+                    while d.textbbox((0,0),line,font=font)[2] > 890:
+                        font=ImageFont.truetype(fontpath,font.size-1)
+                    d.text((500,1390+j*76),line,fill='white',font=font,anchor='mt',stroke_width=3,stroke_fill=(0,0,0,190))
+                # Small pinned emoji stickers stay outside the unobscured desktop.
+                emoji_font=ImageFont.truetype(args.emoji_font,96)
+                for x,y,glyph,angle in [(94,480,'🤖',-10),(824,480,'🐧',8)]:
+                    sticker=Image.new('RGBA',(132,132),(0,0,0,0))
+                    pen=ImageDraw.Draw(sticker)
+                    pen.rounded_rectangle((4,4,128,128),radius=30,fill=(255,255,255,225))
+                    pen.text((18,18),glyph,font=emoji_font,embedded_color=True)
+                    sticker=sticker.rotate(angle,resample=Image.Resampling.BICUBIC,expand=True)
+                    card.alpha_composite(sticker,(x,y))
                 png=temp/f'{lang}-{i}.png'; card.save(png)
                 timeline.append(f"file '{png}'\nduration {b-a}\n")
             timeline.append(f"file '{png}'\n")
             listing=temp/f'{lang}.txt'; listing.write_text(''.join(timeline))
             run('ffmpeg','-hide_banner','-loglevel','warning','-y','-i',str(source),
                 '-f','concat','-safe','0','-i',str(listing),'-i',str(OUT/'vantah-system-music.wav'),
-                '-filter_complex',f'[0:v]setpts={ratio}*PTS,fps=30,setsar=1[desktop];'
-                '[1:v]fps=30,format=yuv420p[paper];[paper][desktop]overlay=0:0:shortest=1,format=yuv420p[v]',
+                '-filter_complex',f'[0:v]setpts={ratio}*PTS,fps=30,setsar=1,split=2[screen][back];'
+                '[back]scale=324:576:force_original_aspect_ratio=increase,crop=324:576,'
+                'boxblur=18:3,scale=1080:1920,eq=brightness=-0.20:saturation=0.80[blur];'
+                '[screen]scale=1040:624[desktop];'
+                '[blur][desktop]overlay=20:648[scene];'
+                '[1:v]fps=30,format=rgba[labels];'
+                '[scene][labels]overlay=0:0:shortest=1,format=yuv420p[v]',
                 '-map','[v]','-map','2:a','-t',str(DURATION),'-c:v','libx264','-preset','medium','-crf','18',
                 '-c:a','aac','-b:a','192k','-movflags','+faststart',str(OUT/f'vantah-system-tour-{lang}.mp4'))
             for ext in ['srt','vtt']:

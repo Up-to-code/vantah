@@ -165,6 +165,6 @@ the tested controls and limitations. The revised multistage Docker image has not
 been validated from a clean build. The earlier v0.1.1 image and installer were
 built and booted, and the patched noVNC keyboard regression passed.
 
-## Full-system video
+## TikTok system story
 
-Watch the [English](docs/social/vantah-system-tour-en.mp4) or [Arabic subtitles](docs/social/vantah-system-tour-ar.mp4) 40-second journey through vAntah. The real recording installs and runs a terminal app, opens Files, edits a document, adjusts glass and switches language. [Recording, subtitles and rebuild instructions](docs/social/system-tour.md).
+Watch the [English](docs/social/vantah-system-tour-en.mp4) or [Arabic subtitles](docs/social/vantah-system-tour-ar.mp4) 40-second TikTok story: the full vAntah desktop centered over a blurred recording, with robotics, iOS inspiration and Arabic subtitles. The real journey installs and runs a terminal app, opens Files, edits a document, adjusts glass and switches language. Raspberry Pi robotics is the intended goal; hardware testing remains open. [Recording, subtitles and rebuild instructions](docs/social/system-tour.md).

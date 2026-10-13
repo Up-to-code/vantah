@@ -184,3 +184,7 @@ Five timed subtitle cards explain the Alpine Linux base, iOS-inspired workspace,
 ## TikTok system story
 
 Watch the [English](docs/social/vantah-system-tour-en.mp4) or [Arabic subtitles](docs/social/vantah-system-tour-ar.mp4) 15-second TikTok story: the full vAntah desktop centered over a blurred recording, with the whole 140-second recording sped up 9⅓×, iOS inspiration and Arabic subtitles. The story is clear: I took Linux and edited it; I did not build an OS from scratch. The real journey installs and runs a terminal app, opens Files, edits a document, adjusts glass and switches language. Raspberry Pi robotics is the intended goal; hardware testing remains open. [Recording, subtitles and rebuild instructions](docs/social/system-tour.md).
+
+## Project links
+
+[Source](https://github.com/Up-to-code/vantah) · [Issues](https://github.com/Up-to-code/vantah/issues) · [Public project directory](https://github.com/qentrah/.github/blob/main/profile/PROJECTS.md)
